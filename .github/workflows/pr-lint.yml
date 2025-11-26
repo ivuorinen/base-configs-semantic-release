@@ -27,4 +27,4 @@ jobs:
     steps:
       - name: Run PR Lint
         # https://github.com/ivuorinen/actions
-        uses: ivuorinen/actions/pr-lint@d3cc8d4790723db59c5e27d2e370fdad3663c7bd # 25.10.12
+        uses: ivuorinen/actions/pr-lint@9aa16a8164e87e23406e86564d6a19d51fc5d46a # v25.11.26
