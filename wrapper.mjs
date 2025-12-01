@@ -1,2 +1,2 @@
-import config from './index.cjs'
-export default config
+import config from "./index.cjs";
+export default config;
