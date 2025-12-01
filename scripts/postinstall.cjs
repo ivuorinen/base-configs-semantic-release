@@ -16,11 +16,15 @@ if (foundConfig.length > 0) {
   process.exit(0);
 }
 
-const filePath = path.join(process.env.INIT_CWD, ".releaserc.json");
+const filePath = path.join(process.env.INIT_CWD || process.cwd(), ".releaserc.json");
 const fileConfigObject = {
   extends: ["@ivuorinen/semantic-release-config"],
 };
 
-if (!fs.existsSync(filePath)) {
-  fs.writeFileSync(filePath, JSON.stringify(fileConfigObject, undefined, 2));
+try {
+  fs.writeFileSync(filePath, JSON.stringify(fileConfigObject, undefined, 2), { flag: "wx" });
+} catch (err) {
+  if (err.code !== "EEXIST") {
+    throw err;
+  }
 }
