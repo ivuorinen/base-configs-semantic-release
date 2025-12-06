@@ -1,3 +1,38 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See
+[Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# 1.0.0 (2025-12-06)
+
+
+### Bug Fixes
+
+* **github-action:** update github/codeql-action (v3.29.0 → v3.29.2) ([#2](https://github.com/ivuorinen/base-configs-semantic-release/issues/2)) ([a3f1c53](https://github.com/ivuorinen/base-configs-semantic-release/commit/a3f1c53777d50f30599554e1cac891f911108f09))
+* **github-action:** update github/codeql-action (v3.29.2 → v3.29.4) ([#4](https://github.com/ivuorinen/base-configs-semantic-release/issues/4)) ([3fdef2a](https://github.com/ivuorinen/base-configs-semantic-release/commit/3fdef2ad20fa18a0010cece7108df6dae52824b9))
+* **github-action:** update github/codeql-action (v3.29.4 → v3.29.5) ([#6](https://github.com/ivuorinen/base-configs-semantic-release/issues/6)) ([b33a92d](https://github.com/ivuorinen/base-configs-semantic-release/commit/b33a92dd023a116cf51f6fe9209895bbb0e593eb))
+* **github-action:** update github/codeql-action (v3.29.5 → v3.29.8) ([#9](https://github.com/ivuorinen/base-configs-semantic-release/issues/9)) ([a3ed7e9](https://github.com/ivuorinen/base-configs-semantic-release/commit/a3ed7e9c1ee6e223cf3af499c447c6da0ac3ef81))
+* **github-action:** update github/codeql-action (v3.29.8 → v3.29.9) ([#13](https://github.com/ivuorinen/base-configs-semantic-release/issues/13)) ([309977e](https://github.com/ivuorinen/base-configs-semantic-release/commit/309977ec40f1aed6386b9c31d7dfa77fad4098fd))
+* **github-action:** update github/codeql-action (v3.29.9 → v3.29.10) ([#14](https://github.com/ivuorinen/base-configs-semantic-release/issues/14)) ([6c7813b](https://github.com/ivuorinen/base-configs-semantic-release/commit/6c7813beb41a1b77f4f40b7949d66be7d159e1fd))
+* **github-action:** update ivuorinen/actions (25.7.21 → 25.7.28) ([#7](https://github.com/ivuorinen/base-configs-semantic-release/issues/7)) ([c4ad4d5](https://github.com/ivuorinen/base-configs-semantic-release/commit/c4ad4d5489aacdec9f8f1dd4af59f3a6ae1302a3))
+* **github-action:** update ivuorinen/actions (25.7.7 → 25.7.21) ([#5](https://github.com/ivuorinen/base-configs-semantic-release/issues/5)) ([72ed775](https://github.com/ivuorinen/base-configs-semantic-release/commit/72ed7754573c7430e458b8b6dad9131fcd322345))
+* **github-action:** update ivuorinen/actions (25.8.11 → 25.8.18) ([#15](https://github.com/ivuorinen/base-configs-semantic-release/issues/15)) ([e1f1cbf](https://github.com/ivuorinen/base-configs-semantic-release/commit/e1f1cbf4499d2d0175a624f40d10a77e366e61b1))
+* **github-action:** update ivuorinen/actions (25.8.4 → 25.8.11) ([#11](https://github.com/ivuorinen/base-configs-semantic-release/issues/11)) ([c138e92](https://github.com/ivuorinen/base-configs-semantic-release/commit/c138e92c56ffa8abc2a58322236064e86d6d8875))
+* **github-release:** update adrienverge/yamllint (v1.37.0 → v1.37.1) ([#18](https://github.com/ivuorinen/base-configs-semantic-release/issues/18)) ([67b2620](https://github.com/ivuorinen/base-configs-semantic-release/commit/67b26201448f28bbe7d2a99b4bc63a737053fad0))
+* **github-release:** update bridgecrewio/checkov (3.2.400 → 3.2.464) ([#19](https://github.com/ivuorinen/base-configs-semantic-release/issues/19)) ([c12d6cd](https://github.com/ivuorinen/base-configs-semantic-release/commit/c12d6cd30f3eef986a24bc57ef7fd2df63d630ae))
+* **github-release:** update renovatebot/pre-commit-hooks (41.82.7 → 41.82.8) ([#26](https://github.com/ivuorinen/base-configs-semantic-release/issues/26)) ([1bfb208](https://github.com/ivuorinen/base-configs-semantic-release/commit/1bfb20840cd252ff1081a5b7c23079077c5d425b))
+
+
+### Features
+
+* **github-action:** update ivuorinen/actions (25.6.17 → 25.7.7) ([#3](https://github.com/ivuorinen/base-configs-semantic-release/issues/3)) ([d777728](https://github.com/ivuorinen/base-configs-semantic-release/commit/d777728889f75e0e9abc3a53ca743e0af8b231a9))
+* **github-action:** update ivuorinen/actions (25.7.28 → 25.8.4) ([#8](https://github.com/ivuorinen/base-configs-semantic-release/issues/8)) ([d9c3b91](https://github.com/ivuorinen/base-configs-semantic-release/commit/d9c3b915e1c74f44471afb39f021e63674567b2a))
+* **github-release:** update igorshubovych/markdownlint-cli (v0.44.0 → v0.45.0) ([#20](https://github.com/ivuorinen/base-configs-semantic-release/issues/20)) ([7dd1898](https://github.com/ivuorinen/base-configs-semantic-release/commit/7dd189830c49bbf48d5f848f2e22e79b19ee378d))
+* **github-release:** update koalaman/shellcheck-precommit (v0.10.0 → v0.11.0) ([#21](https://github.com/ivuorinen/base-configs-semantic-release/issues/21)) ([3ba15cb](https://github.com/ivuorinen/base-configs-semantic-release/commit/3ba15cbeb911ed85a0420a3a72c3026772e57f3a))
+* initial import from base-configs ([320ca0c](https://github.com/ivuorinen/base-configs-semantic-release/commit/320ca0cef930018c5e23273374809cb97054b1fd))
+* release pipeline ([32c77b8](https://github.com/ivuorinen/base-configs-semantic-release/commit/32c77b85d82c7579d7e142f90416220810468a16))
+* upgrade yarn, prettier format all, upgrade actions ([#74](https://github.com/ivuorinen/base-configs-semantic-release/issues/74)) ([1a41b48](https://github.com/ivuorinen/base-configs-semantic-release/commit/1a41b48f0c091883ca1ce61264f2c8a2167c13b2))
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
