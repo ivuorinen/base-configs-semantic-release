@@ -1,3 +1,5 @@
 {
-  "extends": ["./index.cjs"]
+  "extends": [
+    "./index.cjs"
+  ]
 }
