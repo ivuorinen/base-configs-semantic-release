@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/ivuorinen/base-configs-semantic-release/compare/v1.0.0...v1.1.0) (2026-01-27)
+
+
+### Features
+
+* add branches to shared config ([fbc4c9e](https://github.com/ivuorinen/base-configs-semantic-release/commit/fbc4c9e58716fe26140ff9479da2a07748a9eecc))
+
 # 1.0.0 (2025-12-06)
 
 ### Bug Fixes
