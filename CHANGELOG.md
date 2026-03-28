@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.20](https://github.com/ivuorinen/base-configs-semantic-release/compare/v1.1.19...v1.1.20) (2026-03-28)
+
+
+### Bug Fixes
+
+* **ci:** restrict workflow permissions to job-level only ([#151](https://github.com/ivuorinen/base-configs-semantic-release/issues/151)) ([d9b5a94](https://github.com/ivuorinen/base-configs-semantic-release/commit/d9b5a94cbe463b5aefee64400311584bb1b4b0b7)), closes [#3](https://github.com/ivuorinen/base-configs-semantic-release/issues/3) [#4](https://github.com/ivuorinen/base-configs-semantic-release/issues/4)
+
 ## [1.1.19](https://github.com/ivuorinen/base-configs-semantic-release/compare/v1.1.18...v1.1.19) (2026-03-28)
 
 
