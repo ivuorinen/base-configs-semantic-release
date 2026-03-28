@@ -6,7 +6,7 @@ on:
     branches:
       - main
 
-permissions: read-all
+permissions: {}
 
 env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
