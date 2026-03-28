@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.19](https://github.com/ivuorinen/base-configs-semantic-release/compare/v1.1.18...v1.1.19) (2026-03-28)
+
+
+### Bug Fixes
+
+* **deps:** resolve picomatch and undici vulnerabilities ([#150](https://github.com/ivuorinen/base-configs-semantic-release/issues/150)) ([411efe0](https://github.com/ivuorinen/base-configs-semantic-release/commit/411efe0ea1fc1f4f6ddb83f5ecd54526cd181f27))
+
 ## [1.1.18](https://github.com/ivuorinen/base-configs-semantic-release/compare/v1.1.17...v1.1.18) (2026-03-27)
 
 ## [1.1.17](https://github.com/ivuorinen/base-configs-semantic-release/compare/v1.1.16...v1.1.17) (2026-03-27)
