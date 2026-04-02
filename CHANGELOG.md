@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.22](https://github.com/ivuorinen/base-configs-semantic-release/compare/v1.1.21...v1.1.22) (2026-04-02)
+
 ## [1.1.21](https://github.com/ivuorinen/base-configs-semantic-release/compare/v1.1.20...v1.1.21) (2026-04-01)
 
 ## [1.1.20](https://github.com/ivuorinen/base-configs-semantic-release/compare/v1.1.19...v1.1.20) (2026-03-28)
