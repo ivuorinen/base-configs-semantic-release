@@ -7,24 +7,34 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [Plugins](#plugins)
+- [Release Rules](#release-rules)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [GitHub Actions](#github-actions)
 - [Documentations](#documentations)
 - [Contributing](#contributing)
-- [Changelog](#changelog)
 - [License](#license)
 
 ## Plugins
 
-This shareable configuration use the following plugins:
+This shareable configuration uses the following plugins:
 
-- [`@semantic-release/commit-analyzer`][sr-commit-analyzer-link]
-- [`@semantic-release/release-notes-generator`][sr-release-notes-generator-link]
-- [`@semantic-release/changelog`][sr-changelog-link]
-- [`@semantic-release/npm`][sr-npm-link]
-- [`@semantic-release/github`][sr-github-link]
-- [`@semantic-release/git`][sr-git-link]
+- [`@semantic-release/commit-analyzer`][sr-commit-analyzer-link] — determines version bumps using the [Conventional Commits][conventionalcommits-link] preset
+- [`@semantic-release/release-notes-generator`][sr-release-notes-generator-link] — generates release notes with typed sections
+- [`@semantic-release/npm`][sr-npm-link] — publishes to npm
+- [`@semantic-release/github`][sr-github-link] — creates GitHub releases
+
+## Release Rules
+
+This config is designed to work with [Renovate][renovate-link] commit conventions:
+
+| Commit pattern        | Example                                   | Release    |
+|-----------------------|-------------------------------------------|------------|
+| `feat: ...`           | `feat: add new option`                    | minor      |
+| `fix: ...`            | `fix: resolve parsing error`              | patch      |
+| `chore(deps)!: ...`   | `chore(deps)!: update X (1.0.0 → 2.0.0)`  | minor      |
+| `chore(deps): ...`    | `chore(deps): update X (1.0.0 → 1.1.0)`   | patch      |
+| `chore(actions): ...` | `chore(actions): update actions/checkout` | no release |
 
 ## Installation
 
@@ -69,28 +79,33 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node.js Environment
-        uses: actions/setup-node@v2.1.5
+        uses: actions/setup-node@v4
         with:
           always-auth: true
           node-version: 20
           registry-url: "https://registry.npmjs.org"
 
-      - name: Install Dependencies with Caching
-        uses: bahmutov/npm-install@v1.6.0
+      - name: Install Dependencies
+        run: npm ci
 
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: yarn run semantic-release
+        run: npx semantic-release
 ```
 
 ## Documentations
@@ -101,16 +116,12 @@ Read the [semantic-release docs][semantic-release-docs-link] for more informatio
 
 If you are interested in helping contribute, please take a look at our [contribution guidelines][contributing-link] and open an [issue][issue-link] or [pull request][pull-request-link].
 
-## Changelog
-
-See [CHANGELOG][changelog-link] for a human-readable history of changes.
-
 ## License
 
 Distributed under the MIT License. See [LICENSE][license-link] for more information.
 
-[changelog-link]: ./CHANGELOG.md
-[contributing-link]: https://github.com/ivuorinen/.github/blob/main/CONTRIBUTING.md
+[contributing-link]: ./CONTRIBUTING.md
+[conventionalcommits-link]: https://www.conventionalcommits.org
 [gh-scopes-link]: https://docs.github.com/en/developers/apps/scopes-for-oauth-apps#available-scopes
 [gh-token-link]: https://github.com/settings/tokens/new?scopes=public_repo
 [issue-link]: https://github.com/ivuorinen/base-configs-semantic-release/issues
@@ -120,11 +131,10 @@ Distributed under the MIT License. See [LICENSE][license-link] for more informat
 [npm-link]: https://www.npmjs.com/package/@ivuorinen/semantic-release-config
 [npm-token-link]: https://docs.npmjs.com/about-access-tokens
 [pull-request-link]: https://github.com/ivuorinen/base-configs-semantic-release/pulls
+[renovate-link]: https://docs.renovatebot.com/
 [semantic-release-docs-link]: https://semantic-release.gitbook.io/
 [semantic-release-link]: https://github.com/semantic-release/semantic-release
-[sr-changelog-link]: https://github.com/semantic-release/changelog
 [sr-commit-analyzer-link]: https://github.com/semantic-release/commit-analyzer
-[sr-git-link]: https://github.com/semantic-release/git
 [sr-github-link]: https://github.com/semantic-release/github
 [sr-npm-link]: https://github.com/semantic-release/npm
 [sr-release-notes-generator-link]: https://github.com/semantic-release/release-notes-generator
