@@ -89,10 +89,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ivuorinen/config-checker@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "@ivuorinen/config-checker@npm:2.2.1"
-  checksum: 10c0/3f4a0d2e19b651fc32a30330e10ef3fadb7a4f1087f0af48f521686c7759624c9f9fd2cc961b26407ed3d57797887ada5c8d2855143052478b274d6d5017cd45
+"@ivuorinen/config-checker@npm:^2.2.17":
+  version: 2.2.17
+  resolution: "@ivuorinen/config-checker@npm:2.2.17"
+  checksum: 10c0/ff8cc17517bb7c3bc1080f3964955dfc06b032c03252acfd644700e861677a2cb9d8a77efdf0fda6d8cc56f8173fac0e2e525cb4828e08ed858afa99ce8878cd
   languageName: node
   linkType: hard
 
@@ -100,10 +100,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ivuorinen/semantic-release-config@workspace:."
   dependencies:
-    "@ivuorinen/config-checker": "npm:^2.2.1"
-    "@semantic-release/github": "npm:^12.0.6"
+    "@ivuorinen/config-checker": "npm:^2.2.17"
+    "@semantic-release/github": "npm:^12.0.8"
     conventional-changelog-conventionalcommits: "npm:^9.3.1"
-    semantic-release: "npm:^25.0.3"
+    semantic-release: "npm:^25.0.5"
   languageName: unknown
   linkType: soft
 
@@ -486,9 +486,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@semantic-release/github@npm:^12.0.0, @semantic-release/github@npm:^12.0.6":
-  version: 12.0.6
-  resolution: "@semantic-release/github@npm:12.0.6"
+"@semantic-release/github@npm:^12.0.0, @semantic-release/github@npm:^12.0.8":
+  version: 12.0.8
+  resolution: "@semantic-release/github@npm:12.0.8"
   dependencies:
     "@octokit/core": "npm:^7.0.0"
     "@octokit/plugin-paginate-rest": "npm:^14.0.0"
@@ -498,8 +498,8 @@ __metadata:
     aggregate-error: "npm:^5.0.0"
     debug: "npm:^4.3.4"
     dir-glob: "npm:^3.0.1"
-    http-proxy-agent: "npm:^7.0.0"
-    https-proxy-agent: "npm:^7.0.0"
+    http-proxy-agent: "npm:^9.0.0"
+    https-proxy-agent: "npm:^9.0.0"
     issue-parser: "npm:^7.0.0"
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.0.0"
@@ -509,7 +509,7 @@ __metadata:
     url-join: "npm:^5.0.0"
   peerDependencies:
     semantic-release: ">=24.1.0"
-  checksum: 10c0/2f6b24d73790dbe14e3ac08814fc56f069ec4c96a0e471eeb5247d934b525b54cee9a6d296e90edb6566bb309cf81a04084551e8201362dfd82ca436a2813706
+  checksum: 10c0/d2ad0385f840ea690a847b9c52dd80ef5ff528f6ec7d07b97448dbc522987e2effba9c0b5bc057fe989dc7c90735b0aaeacbdc4580cbdc03c4e30ffbe5da56c9
   languageName: node
   linkType: hard
 
@@ -665,6 +665,13 @@ __metadata:
   version: 4.0.0
   resolution: "abbrev@npm:4.0.0"
   checksum: 10c0/b4cc16935235e80702fc90192e349e32f8ef0ed151ef506aa78c81a7c455ec18375c4125414b99f84b2e055199d66383e787675f0bcd87da7a4dbd59f9eac1d5
+  languageName: node
+  linkType: hard
+
+"agent-base@npm:9.0.0":
+  version: 9.0.0
+  resolution: "agent-base@npm:9.0.0"
+  checksum: 10c0/0274cd9a2a0ee78e3fbe0e80e7e0c41df27102466f7f7b3a67c045bb4c00fc517ce0496de3045b55f5eeec1a0e77d9d0a9b9320b0362bfe61e0c9e6d7ebaee76
   languageName: node
   linkType: hard
 
@@ -1606,13 +1613,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"https-proxy-agent@npm:^7.0.0, https-proxy-agent@npm:^7.0.1":
+"http-proxy-agent@npm:^9.0.0":
+  version: 9.1.0
+  resolution: "http-proxy-agent@npm:9.1.0"
+  dependencies:
+    agent-base: "npm:9.0.0"
+    debug: "npm:^4.3.4"
+    proxy-agent-negotiate: "npm:1.1.0"
+  checksum: 10c0/1dff8eaef76b154545c1a7492fa01305dda393efba53d894f5fc45992d711fa4036bdc64a61e0bc76bb7531513a4f8ddcccdf81d1476ddcc9cbf621735d397e4
+  languageName: node
+  linkType: hard
+
+"https-proxy-agent@npm:^7.0.1":
   version: 7.0.6
   resolution: "https-proxy-agent@npm:7.0.6"
   dependencies:
     agent-base: "npm:^7.1.2"
     debug: "npm:4"
   checksum: 10c0/f729219bc735edb621fa30e6e84e60ee5d00802b8247aac0d7b79b0bd6d4b3294737a337b93b86a0bd9e68099d031858a39260c976dc14cdbba238ba1f8779ac
+  languageName: node
+  linkType: hard
+
+"https-proxy-agent@npm:^9.0.0":
+  version: 9.1.0
+  resolution: "https-proxy-agent@npm:9.1.0"
+  dependencies:
+    agent-base: "npm:9.0.0"
+    debug: "npm:^4.3.4"
+    proxy-agent-negotiate: "npm:1.1.0"
+  checksum: 10c0/95ca9504944e0b6d214f9da0b4d747512bf79187b4c6f69db667049bdcc43e2b67c7932ad2c4bd6952e99e83de9a7d42dafff63672d7898da297b2736f4b42bd
   languageName: node
   linkType: hard
 
@@ -2988,6 +3017,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proxy-agent-negotiate@npm:1.1.0":
+  version: 1.1.0
+  resolution: "proxy-agent-negotiate@npm:1.1.0"
+  peerDependencies:
+    kerberos: ^2.0.0
+  peerDependenciesMeta:
+    kerberos:
+      optional: true
+  checksum: 10c0/e1c89e46b739a790335555c8182ed919f6fa16ca244cd4c01a9806a1c471af785b3beff8bd8a891422bedfffb0f43115333d98ad426f9bc82e7cd20c6a15ceb0
+  languageName: node
+  linkType: hard
+
 "qrcode-terminal@npm:^0.12.0":
   version: 0.12.0
   resolution: "qrcode-terminal@npm:0.12.0"
@@ -3134,9 +3175,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semantic-release@npm:^25.0.3":
-  version: 25.0.3
-  resolution: "semantic-release@npm:25.0.3"
+"semantic-release@npm:^25.0.5":
+  version: 25.0.5
+  resolution: "semantic-release@npm:25.0.5"
   dependencies:
     "@semantic-release/commit-analyzer": "npm:^13.0.1"
     "@semantic-release/error": "npm:^4.0.0"
@@ -3168,7 +3209,7 @@ __metadata:
     yargs: "npm:^18.0.0"
   bin:
     semantic-release: bin/semantic-release.js
-  checksum: 10c0/ca961722c61c44e90c419aa6ad812411203f6ff972947733febbc93433b91b526af2095051935816d70242ebc044efb70338f5f05b66bab4907c1be8b093ac12
+  checksum: 10c0/54a119377fdcc8ea3b2acb96ad5d582b7f0caf7c2612a6c4a47b22fce47756a2d8c2f387d8e946f0ecbf178a723072d11237d837963bccc203d97e4e35853850
   languageName: node
   linkType: hard
 
