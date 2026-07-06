@@ -8,45 +8,31 @@ on:
   pull_request:
     branches: ["main"]
   schedule:
-    - cron: "30 1 * * 0" # Run at 1:30 AM UTC every Sunday
+    - cron: "30 1 * * 0"
   merge_group:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  actions: read # to read Actions run and workflow metadata
-  contents: read # to check out the repository
+permissions: {}
 
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
+      actions: read # to read Actions run and workflow metadata
+      contents: read # to check out the repository
+      packages: read # to download packages when needed by analysis
       security-events: write # to upload SARIF results to code scanning
-
     strategy:
       fail-fast: false
       matrix:
-        language: ["javascript"] # Add languages used in your actions
-
+        language: ["actions", "javascript"]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: CodeQL Analysis
+        uses: ivuorinen/actions/codeql-analysis@8395dad6b7d5d7d2e1d016cac1eede33ab404a3c # v2026.06.18
         with:
-          persist-credentials: false
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@54f647b7e1bb85c95cddabcd46b0c578ec92bc1a # v4.36.3
-        with:
-          languages: ${{ matrix.language }}
+          language: ${{ matrix.language }}
           queries: security-and-quality
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@54f647b7e1bb85c95cddabcd46b0c578ec92bc1a # v4.36.3
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@54f647b7e1bb85c95cddabcd46b0c578ec92bc1a # v4.36.3
-        with:
-          category: "/language:${{matrix.language}}"

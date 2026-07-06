@@ -12,10 +12,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
-permissions:
-  contents: read # to check out the repository
-  packages: read # to read packages
-  statuses: read # to read commit statuses
+permissions: {}
 
 jobs:
   stale:
