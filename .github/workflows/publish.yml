@@ -6,7 +6,11 @@ on:
     branches:
       - main
 
-permissions: read-all
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions: {}
 
 env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -17,16 +21,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      statuses: write
-      contents: read
-      packages: read
-      issues: write
-      pull-requests: write
+      statuses: write # to update commit statuses
+      contents: read # to check out the repository
+      packages: read # to read packages
+      issues: write # to comment on and label issues
+      pull-requests: write # to comment on and label pull requests
 
     steps:
       - name: Run PR Lint
         # https://github.com/ivuorinen/actions
-        uses: ivuorinen/actions/pr-lint@d919327c7eb6279247eb1ecf92fb4ce0d915679b # v2026.02.28
+        uses: ivuorinen/actions/pr-lint@94a4f68a6b95ecc1677fbcac1683119fd869adf7 # v2026.07.04
 
   publish:
     name: Publish
@@ -41,12 +45,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Setup Node.js Environment
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           always-auth: true
           node-version-file: ".nvmrc"
@@ -58,7 +63,7 @@ jobs:
         run: npm install -g corepack --force && corepack enable
 
       - name: Cache Node Modules
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache
         with:
           path: node_modules
