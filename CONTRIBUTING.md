@@ -84,7 +84,7 @@ Commit messages determine how versions are bumped automatically:
 | `feat:`           | `feat: add preset config option`             | minor        |
 | `fix:`            | `fix: correct release rule matching`         | patch        |
 | `chore(deps):`    | `chore(deps): update semantic-release`       | patch        |
-| `chore(deps)!:`   | `chore(deps)!: update X (1.0.0 -> 2.0.0)`    | minor        |
+| `chore(deps)!:`   | `chore(deps)!: update X (1.0.0 -> 2.0.0)`    | major        |
 | `docs:`           | `docs: update README examples`               | no release   |
 | `chore(actions):` | `chore(actions): update checkout action`     | no release   |
 

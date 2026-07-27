@@ -32,7 +32,7 @@ This config is designed to work with [Renovate][renovate-link] commit convention
 |-----------------------|-------------------------------------------|------------|
 | `feat: ...`           | `feat: add new option`                    | minor      |
 | `fix: ...`            | `fix: resolve parsing error`              | patch      |
-| `chore(deps)!: ...`   | `chore(deps)!: update X (1.0.0 → 2.0.0)`  | minor      |
+| `chore(deps)!: ...`   | `chore(deps)!: update X (1.0.0 → 2.0.0)`  | major      |
 | `chore(deps): ...`    | `chore(deps): update X (1.0.0 → 1.1.0)`   | patch      |
 | `chore(actions): ...` | `chore(actions): update actions/checkout` | no release |
 

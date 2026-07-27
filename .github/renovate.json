@@ -2,5 +2,15 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>ivuorinen/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "description": "CI-only bumps must not version the published package. index.cjs maps chore(deps)! to major, so action and pre-commit updates have to carry the actions scope instead.",
+      "matchManagers": [
+        "github-actions",
+        "pre-commit"
+      ],
+      "semanticCommitScope": "actions"
+    }
   ]
 }

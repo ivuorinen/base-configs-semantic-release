@@ -23,7 +23,7 @@ Uses Conventional Commits. Release rules:
 
 - `feat:` → minor
 - `fix:` → patch
-- `chore(deps)!:` → minor (breaking dep update, but this package's API is unchanged)
+- `chore(deps)!:` → major (breaking dep update; consumers on `^1.x` must not get it silently)
 - `chore(deps):` → patch
 - `chore(actions):` → no release
 
