@@ -50,9 +50,21 @@ Thank you for your interest in contributing! This guide will help you get starte
 2. Make your changes. The key files are:
    - `index.cjs` — the shared semantic-release configuration
    - `wrapper.mjs` — ESM wrapper that re-exports `index.cjs`
+   - `index.d.ts` — published type declarations; update alongside `index.cjs`
    - `scripts/postinstall.cjs` — auto-creates `.releaserc.json` in consuming projects
 
-3. Verify the config loads correctly:
+3. Run the tests:
+
+   ```sh
+   yarn test
+   ```
+
+   This typechecks `index.d.ts`, then runs three suites: real commit messages fed
+   through `@semantic-release/commit-analyzer` asserting the exact release each one
+   cuts, the config shape and exports map, and the postinstall scaffold. Any change
+   to `index.cjs` needs them to pass.
+
+4. Optionally, inspect the resolved config:
 
    ```sh
    node -e "console.log(JSON.stringify(require('./index.cjs'), null, 2))"
@@ -68,10 +80,13 @@ Pre-commit hooks run automatically on each commit and enforce:
 - GitHub Actions validation ([actionlint](https://github.com/rhysd/actionlint))
 - No private keys in commits
 
+ESLint is not a pre-commit hook; run it yourself before pushing.
+
 You can run all checks manually:
 
 ```sh
 pre-commit run --all-files
+yarn lint
 ```
 
 ## Commit Messages

@@ -75,27 +75,32 @@ on:
     branches:
       - main
 
+permissions: {}
+
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-      id-token: write
+      contents: write # to publish a GitHub release
+      issues: write # to comment on released issues
+      pull-requests: write # to comment on released pull requests
+      id-token: write # for npm provenance via OIDC
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           always-auth: true
-          node-version: 20
+          # Reads the Node version from a committed .nvmrc, so it never goes stale.
+          # No .nvmrc? Swap this line for: node-version: 24
+          node-version-file: ".nvmrc"
           registry-url: "https://registry.npmjs.org"
 
       - name: Install Dependencies
@@ -105,8 +110,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
         run: npx semantic-release
 ```
+
+Actions are pinned to full commit SHAs rather than `@v4`-style tags: a tag is
+mutable, and this workflow runs with `contents: write` and an `NPM_TOKEN` in
+scope. Drop `id-token: write` and `NPM_CONFIG_PROVENANCE` together if you do not
+want provenance attestations.
+
+The Node version comes from `.nvmrc` — one file your editor, your local shell and
+CI all read, so the version cannot drift between them. `setup-node` fails outright
+if the file is absent, so swap in the commented `node-version: 24` line instead if
+you do not keep one.
+
+Either way, do not pin a release job to Node 20. It satisfies this package's
+`engines` floor of `>=20`, but it is end-of-life and receives no security patches,
+and the release job is the one holding your `NPM_TOKEN`.
 
 ## Documentations
 
@@ -126,7 +146,7 @@ Distributed under the MIT License. See [LICENSE][license-link] for more informat
 [gh-token-link]: https://github.com/settings/tokens/new?scopes=public_repo
 [issue-link]: https://github.com/ivuorinen/base-configs-semantic-release/issues
 [license-badge]: https://img.shields.io/github/license/ivuorinen/base-configs-semantic-release?style=flat-square&labelColor=292a44&color=663399
-[license-link]: ./LICENSE
+[license-link]: ./LICENSE.md
 [npm-badge]: https://img.shields.io/npm/v/@ivuorinen/semantic-release-config?style=flat-square&labelColor=292a44&color=663399
 [npm-link]: https://www.npmjs.com/package/@ivuorinen/semantic-release-config
 [npm-token-link]: https://docs.npmjs.com/about-access-tokens
