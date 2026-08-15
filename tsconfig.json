@@ -1,0 +1,19 @@
+{
+  "//": [
+    "Exists solely to typecheck the published index.d.ts, which nothing else covers: ESLint skips .d.ts files and the runtime tests only assert the file exists on disk.",
+    "skipLibCheck stays false on purpose. index.d.ts is itself a declaration file, so turning it on would skip the only file this config exists to check and make `yarn typecheck` a no-op that always passes.",
+    "noImplicitAny is off because skipLibCheck: false pulls semantic-release's own declarations into the program, and those import the untyped `signale` package. That is a defect in a dependency's types, not in ours, and the one error class not fixable from here. Every other `strict` check still applies to index.d.ts.",
+    "Prose lives in this root key rather than JSONC comments because TypeScript rejects unknown keys inside compilerOptions and the pretty-format-json pre-commit hook rejects comments in .json files."
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": false,
+    "noEmit": true,
+    "skipLibCheck": false,
+    "module": "node18",
+    "moduleResolution": "node16",
+    "target": "es2022",
+    "types": ["node"]
+  },
+  "include": ["index.d.ts"]
+}
