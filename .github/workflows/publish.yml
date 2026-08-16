@@ -6,10 +6,12 @@ on:
     branches:
       - main
 
+# Releases must not be cancelled mid-run, so disable cancel-in-progress.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
+# Deny-by-default at the workflow level; each job grants only what it needs.
 permissions: {}
 
 jobs:
@@ -18,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      statuses: write # to update commit statuses
-      contents: read # to check out the repository
-      packages: read # to read packages
+      statuses: write # required to report the lint status
+      contents: read # required to checkout the repository
+      packages: read # required to read packages metadata
 
     steps:
       - name: Run PR Lint
@@ -28,6 +30,9 @@ jobs:
         uses: ivuorinen/actions/pr-lint@08beec49e790e0093f5df8063f3a484ac5a75e34 # v2026.08.12
 
   # Shared with pr-lint.yml so the pre-merge and pre-publish gates cannot drift.
+  # Unlike the sibling base-configs-* repos this runs as a gating job rather than
+  # a step inside publish: the suite needs an install and a typecheck, so it is
+  # not the dependency-free `node --test` those repos can inline.
   test:
     name: Test
     uses: ./.github/workflows/test.yml
@@ -35,51 +40,44 @@ jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
-    # Gates the publish credentials behind an environment so that adding a
-    # trigger to this workflow cannot, on its own, widen who can reach them.
-    # Move PAT and NPM_TOKEN to this environment and restrict its deployment
-    # branches to main; until then they resolve as repository secrets and
-    # behaviour is unchanged.
-    environment: npm-publish
     needs:
       - Linter
       - test
-    # Deliberately minimal. semantic-release authenticates with secrets.PAT
-    # (passed as GITHUB_TOKEN below), not with the automatic token: the github
-    # plugin reads it from env, and the tag push uses a token-bearing remote URL
-    # rather than git credentials, which persist-credentials: false discards.
-    # So contents/issues/pull-requests write on the automatic token were never
-    # exercised — granting them only widened the blast radius of any other step.
+    # Dedicated environment scopes access to the PAT secret.
+    environment: release
     permissions:
-      contents: read # to check out the repository
-      id-token: write # to enable use of OIDC for npm provenance
+      contents: read # required to checkout the repository
+      id-token: write # required for npm OIDC Trusted Publishing
+      # No contents/issues/pull-requests write: semantic-release authenticates
+      # as secrets.PAT, not the automatic token. The github plugin reads the PAT
+      # from env and the tag push uses a token-bearing remote URL, so the
+      # automatic token is never exercised here.
 
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          persist-credentials: false
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup Node.js Environment
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          always-auth: true
+          # No auth token: npm authenticates to the registry via OIDC Trusted
+          # Publishing (requires a trusted publisher configured on npmjs.com).
           node-version-file: ".nvmrc"
           registry-url: "https://registry.npmjs.org"
           scope: "@ivuorinen"
 
-      # Pinned: this job holds NPM_TOKEN and the PAT, and `npm install -g` runs
-      # the package's install scripts, so an unpinned fetch is arbitrary code
-      # execution next to the publish credentials. Node 25 unbundled corepack,
-      # so the step cannot simply be dropped while .nvmrc pins v26.
-      - name: Install and enable corepack
+      - name: Enable corepack
         shell: sh
-        run: npm install -g corepack@0.35.0 --force && corepack enable
+        # Use the Corepack the runner already provides instead of installing a
+        # floating copy from npm in this privileged release job.
+        run: corepack enable
 
-      # The key must cover everything that changes the tree, not just the
-      # lockfile: .nvmrc can move without yarn.lock moving, and a hit skips the
-      # install entirely, which would publish a tree built for another Node.
+      # Keyed on everything that changes the tree, not just the lockfile: a
+      # .nvmrc bump without a yarn.lock change would otherwise hit a stale cache
+      # and skip the install, publishing a tree built for another Node.
       - name: Cache Node Modules
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache
@@ -87,9 +85,6 @@ jobs:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('.nvmrc', 'yarn.lock') }}
 
-      # --immutable to match the test job that gates this one. Without it the
-      # highest-privilege job would have the loosest install, and could publish
-      # a resolution the lockfile never recorded.
       - name: Install Dependencies
         shell: bash
         if: steps.cache.outputs.cache-hit != 'true'
@@ -98,6 +93,7 @@ jobs:
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0
         env:
+          # No NPM_TOKEN: @semantic-release/npm publishes via OIDC Trusted
+          # Publishing using the id-token: write permission above, which also
+          # generates the provenance attestation without NPM_CONFIG_PROVENANCE.
           GITHUB_TOKEN: ${{ secrets.PAT }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true # uses the id-token: write permission above

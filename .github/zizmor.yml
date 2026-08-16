@@ -1,17 +1,10 @@
 ---
 # zizmor configuration: https://docs.zizmor.sh/configuration/
-rules:
-  adhoc-packages:
-    # Node 25 unbundled corepack, so it must be bootstrapped globally and no
-    # lockfile can cover it. The residual risk zizmor is pointing at — an
-    # unpinned fetch running install scripts next to the publish credentials —
-    # is closed by pinning the exact version at both call sites; what remains is
-    # the global install itself, which is unavoidable. Re-check this ignore if
-    # the corepack pin is ever loosened back to a floating version.
-    ignore:
-      - publish.yml
-      - test.yml
-  use-trusted-publishing:
-    # npm trusted publishing requires registry-side setup; tracked separately
-    ignore:
-      - publish.yml
+#
+# No rule suppressions. The two that used to live here are both resolved rather
+# than ignored: `adhoc-packages` (the workflows now use the Corepack the runner
+# provides instead of `npm install -g corepack`) and `use-trusted-publishing`
+# (publish.yml authenticates to npm via OIDC and carries no NPM_TOKEN).
+#
+# Re-add a suppression only with the reason written next to it.
+rules: {}
