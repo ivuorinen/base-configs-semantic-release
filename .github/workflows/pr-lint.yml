@@ -32,4 +32,10 @@ jobs:
   # Shared with publish.yml so the pre-merge and pre-publish gates cannot drift.
   test:
     name: Test
+    # Required, not redundant with the permissions inside test.yml. This
+    # workflow denies by default at the top, a called workflow can never hold
+    # more than its caller grants, and the calling job is where that ceiling is
+    # set — without this the run fails at startup before any job begins.
+    permissions:
+      contents: read # to check out the repository
     uses: ./.github/workflows/test.yml
