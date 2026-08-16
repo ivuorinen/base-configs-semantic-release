@@ -43,8 +43,12 @@ jobs:
     needs:
       - Linter
       - test
-    # Dedicated environment scopes access to the PAT secret.
-    environment: release
+    # Deliberately no `environment:`. Declaring one adds `:environment:<name>`
+    # to the OIDC token's subject claim, and npm's trusted publisher for this
+    # package was established from a publish.yml that had no environment at all
+    # (rekor logIndex 2429132485, commit 563f77a). Changing the subject risks
+    # breaking registry authentication for a gate that adds nothing here: the
+    # workflow already only triggers on push to main.
     permissions:
       contents: read # required to checkout the repository
       id-token: write # required for npm OIDC Trusted Publishing

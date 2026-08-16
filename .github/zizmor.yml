@@ -1,10 +1,27 @@
 ---
 # zizmor configuration: https://docs.zizmor.sh/configuration/
+rules:
+  secrets-outside-env:
+    # secrets.PAT is read without a dedicated environment, and that is a
+    # deliberate trade rather than an oversight.
+    #
+    # npm's trusted publisher for @ivuorinen/semantic-release-config was
+    # established from a publish.yml carrying no `environment:` key (rekor
+    # logIndex 2429132485, commit 563f77a). Adding one appends
+    # `:environment:<name>` to the OIDC subject claim, which risks failing
+    # registry authentication on the next release.
+    #
+    # What the environment would have bought — stopping a new trigger from
+    # widening who reaches the secret — is small here: publish.yml triggers
+    # only on push to main, and NPM_TOKEN no longer exists, so the PAT is the
+    # single remaining secret in the job.
+    #
+    # Revisit if the npm trusted publisher entry is updated to pin an
+    # environment, at which point add `environment:` back and drop this ignore.
+    ignore:
+      - publish.yml
 #
-# No rule suppressions. The two that used to live here are both resolved rather
-# than ignored: `adhoc-packages` (the workflows now use the Corepack the runner
-# provides instead of `npm install -g corepack`) and `use-trusted-publishing`
-# (publish.yml authenticates to npm via OIDC and carries no NPM_TOKEN).
-#
-# Re-add a suppression only with the reason written next to it.
-rules: {}
+# `adhoc-packages` and `use-trusted-publishing` were previously ignored here.
+# Both are now resolved rather than suppressed: the workflows use the Corepack
+# the runner provides instead of `npm install -g corepack`, and publish.yml
+# authenticates to npm via OIDC with no NPM_TOKEN.
