@@ -61,9 +61,13 @@ None accepted knowingly, and the residual exposure is small.
 
 What an Environment would buy is a guard against a future trigger change
 widening who can reach the secret. That risk is low here: `publish.yml` triggers
-only on `push` to `main`, and `NPM_TOKEN` no longer exists at all since the job
-authenticates to npm via OIDC trusted publishing, so `secrets.PAT` is the single
-remaining secret in the job.
+only on `push` to `main`, and the job no longer passes `NPM_TOKEN` — it
+authenticates to npm via OIDC trusted publishing — so `secrets.PAT` is the only
+secret the job still reads.
+
+The `NPM_TOKEN` repository secret itself is still configured. It is scheduled
+for deletion once the first release publishes green under the OIDC workflow, so
+until that cleanup lands it remains reachable by any job that asks for it.
 
 What it would cost is concrete. A GitHub job that declares `environment: <name>`
 gets `:environment:<name>` appended to the OIDC token's `sub` claim. npm matches
