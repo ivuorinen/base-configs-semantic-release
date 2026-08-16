@@ -23,9 +23,11 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 .npm
 .cache/
 
-# Local environment
-.env
-.env*.local
+# Local environment. `.env*` rather than `.env` + `.env*.local`, which left
+# .env.production and .env.development tracked. Example files are opted back in.
+.env*
+!.env.example
+!.env*.example
 
 # Editors and OS
 .DS_Store
