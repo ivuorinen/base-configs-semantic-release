@@ -13,7 +13,11 @@
     "module": "node18",
     "moduleResolution": "node16",
     "target": "es2022",
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "include": ["index.d.ts"]
+  "include": [
+    "index.d.ts"
+  ]
 }
