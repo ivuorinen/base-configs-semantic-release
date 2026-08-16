@@ -18,6 +18,9 @@
     ]
   },
   "include": [
-    "index.d.ts"
+    "index.d.cts",
+    "index.d.mts",
+    "index.d.ts",
+    "test/types"
   ]
 }

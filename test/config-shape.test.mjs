@@ -81,9 +81,15 @@ test("the ESM wrapper exposes the same config object as the CJS entry point", ()
   assert.deepStrictEqual(wrapped, config);
 });
 
+// exports is a nested conditional map, so collect the leaf paths rather than
+// the condition objects.
+const exportPaths = Object.values(pkg.exports).flatMap((entry) =>
+  typeof entry === "string" ? [entry] : Object.values(entry),
+);
+
 // The exports map is only useful if the files it names actually ship.
 test("every entry point declared in package.json exists on disk", () => {
-  const declared = [pkg.main, pkg.module, pkg.types, ...Object.values(pkg.exports)];
+  const declared = [pkg.main, pkg.module, pkg.types, ...exportPaths];
   for (const entry of declared) {
     const resolved = fileURLToPath(new URL(`../${entry.replace(/^\.\//u, "")}`, import.meta.url));
     assert.ok(fs.existsSync(resolved), `${entry} is declared in package.json but missing`);
@@ -92,14 +98,28 @@ test("every entry point declared in package.json exists on disk", () => {
 
 test("every declared entry point is inside the published files allowlist", () => {
   const shipped = new Set(pkg.files);
-  for (const entry of [pkg.main, pkg.module, pkg.types]) {
+  for (const entry of [pkg.main, pkg.module, pkg.types, ...exportPaths]) {
     const name = entry.replace(/^\.\//u, "");
     const covered = shipped.has(name) || [...shipped].some((f) => f.endsWith("/*") && name.startsWith(f.slice(0, -1)));
     assert.ok(covered, `${name} would not be published — add it to package.json "files"`);
   }
 });
 
-// types must resolve before import/require, or TypeScript consumers never see it.
-test("the exports map declares types first", () => {
-  assert.strictEqual(Object.keys(pkg.exports)[0], "types");
+// types must resolve before default inside each condition, or TypeScript matches
+// the JavaScript file and the consumer silently gets `any`.
+test("every exports condition declares types first", () => {
+  for (const [condition, entry] of Object.entries(pkg.exports)) {
+    assert.strictEqual(typeof entry, "object", `${condition} should be a conditions object`);
+    assert.strictEqual(Object.keys(entry)[0], "types", `${condition} must list types first`);
+  }
+});
+
+// A single shared .d.ts cannot type both halves of a dual-format package: the
+// CJS side needs `export =` and the ESM side `export default`. Pointing both at
+// one file is what made `import x = require(...)` fail with TS1471.
+test("each module format gets its own declaration file", () => {
+  assert.strictEqual(pkg.exports.require.types, "./index.d.cts");
+  assert.strictEqual(pkg.exports.import.types, "./index.d.mts");
+  assert.match(fs.readFileSync(new URL("../index.d.cts", import.meta.url), "utf8"), /^export = config;$/mu);
+  assert.match(fs.readFileSync(new URL("../index.d.mts", import.meta.url), "utf8"), /^export default config;$/mu);
 });

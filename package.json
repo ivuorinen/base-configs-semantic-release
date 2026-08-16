@@ -14,6 +14,8 @@
   },
   "files": [
     "index.cjs",
+    "index.d.cts",
+    "index.d.mts",
     "index.d.ts",
     "wrapper.mjs",
     "scripts/*"
@@ -31,9 +33,14 @@
   "module": "wrapper.mjs",
   "types": "index.d.ts",
   "exports": {
-    "types": "./index.d.ts",
-    "import": "./wrapper.mjs",
-    "require": "./index.cjs"
+    "import": {
+      "types": "./index.d.mts",
+      "default": "./wrapper.mjs"
+    },
+    "require": {
+      "types": "./index.d.cts",
+      "default": "./index.cjs"
+    }
   },
   "publishConfig": {
     "access": "public"
