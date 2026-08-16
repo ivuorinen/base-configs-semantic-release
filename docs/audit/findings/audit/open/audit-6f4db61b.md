@@ -12,7 +12,9 @@ found: 2026-08-16
 
 ## Problem
 
-The publish job reads `secrets.PAT` without a dedicated GitHub Environment. zizmor's `secrets-outside-env` audit reports this at High confidence, and it is suppressed in `.github/zizmor.yml` rather than fixed.
+The publish job reads `secrets.PAT` without a dedicated GitHub Environment.
+zizmor's `secrets-outside-env` audit reports this at High confidence, and it is
+suppressed in `.github/zizmor.yml` rather than fixed.
 
 This supersedes the earlier resolution of `audit-a6526808`, which added `environment: npm-publish` and was later renamed to `release`. That gate has been deliberately removed.
 
@@ -33,7 +35,7 @@ The job declares no environment, only the reason it does not:
 
 The signing certificate for the last published release binds an identity with no environment component:
 
-```
+```text
 SAN: https://github.com/ivuorinen/base-configs-semantic-release/.github/workflows/publish.yml@refs/heads/main
 OID 1.3.6.1.4.1.57264.1.5:  ivuorinen/base-configs-semantic-release
 OID 1.3.6.1.4.1.57264.1.10: 563f77aa5fb3f60df7ce19f82c45c39329a77e7c
@@ -41,14 +43,14 @@ OID 1.3.6.1.4.1.57264.1.10: 563f77aa5fb3f60df7ce19f82c45c39329a77e7c
 
 The workflow at that commit confirms the absence was real, not merely unrecorded:
 
-```
+```text
 $ git show 563f77a:.github/workflows/publish.yml | grep -n 'environment:'
 (no output)
 ```
 
 npm confirms the artifact published from that identity carries provenance:
 
-```
+```text
 latest: 2.0.7
 attestations: {"provenance":{"predicateType":"https://slsa.dev/provenance/v1"}}
 ```
@@ -57,11 +59,23 @@ attestations: {"provenance":{"predicateType":"https://slsa.dev/provenance/v1"}}
 
 None accepted knowingly, and the residual exposure is small.
 
-What an Environment would buy is a guard against a future trigger change widening who can reach the secret. That risk is low here: `publish.yml` triggers only on `push` to `main`, and `NPM_TOKEN` no longer exists at all since the job authenticates to npm via OIDC trusted publishing, so `secrets.PAT` is the single remaining secret in the job.
+What an Environment would buy is a guard against a future trigger change
+widening who can reach the secret. That risk is low here: `publish.yml` triggers
+only on `push` to `main`, and `NPM_TOKEN` no longer exists at all since the job
+authenticates to npm via OIDC trusted publishing, so `secrets.PAT` is the single
+remaining secret in the job.
 
-What it would cost is concrete. A GitHub job that declares `environment: <name>` gets `:environment:<name>` appended to the OIDC token's `sub` claim. npm matches trusted-publisher requests against that claim. The trusted publisher for this package was established from a workflow with no environment, so introducing one risks the next release failing registry authentication — with a symptom that reads as "trusted publishing suddenly stopped working" rather than as a workflow change.
+What it would cost is concrete. A GitHub job that declares `environment: <name>`
+gets `:environment:<name>` appended to the OIDC token's `sub` claim. npm matches
+trusted-publisher requests against that claim. The trusted publisher for this
+package was established from a workflow with no environment, so introducing one
+risks the next release failing registry authentication — with a symptom that
+reads as "trusted publishing suddenly stopped working" rather than as a workflow
+change.
 
-The sibling `base-configs-commitlint` does combine `environment: release` with trusted publishing successfully, so the pattern is viable; it is this package's registry-side entry that has not been confirmed to tolerate the added claim.
+The sibling `base-configs-commitlint` does combine `environment: release` with
+trusted publishing successfully, so the pattern is viable; it is this package's
+registry-side entry that has not been confirmed to tolerate the added claim.
 
 ## Fix
 
