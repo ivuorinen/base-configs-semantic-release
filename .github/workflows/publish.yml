@@ -95,10 +95,14 @@ jobs:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('.nvmrc', 'yarn.lock') }}
 
+      # --mode=skip-build: Yarn v2+ runs dependency lifecycle scripts on install
+      # by default. This job holds the release credentials, so that is the worst
+      # place to execute arbitrary third-party install code. Nothing in this tree
+      # needs a build step.
       - name: Install Dependencies
         shell: bash
         if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install --immutable
+        run: yarn install --immutable --mode=skip-build
 
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0

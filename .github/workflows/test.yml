@@ -38,9 +38,12 @@ jobs:
         # floating copy from npm.
         run: corepack enable
 
+      # --mode=skip-build: Yarn v2+ runs dependency lifecycle scripts on install
+      # by default, which is arbitrary third-party code execution on the runner.
+      # Nothing in this tree needs a build step — the suite is green without it.
       - name: Install Dependencies
         shell: bash
-        run: yarn install --immutable
+        run: yarn install --immutable --mode=skip-build
 
       - name: Run Tests
         shell: bash
