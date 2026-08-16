@@ -1,0 +1,29 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/dependabot-2.0.json
+#
+# Dependabot only ever bumps yarn.lock here — the published tarball contains no
+# lockfile (see `files` in package.json), so these updates change nothing for
+# consumers. They must not cut a release, hence the `actions` scope, which
+# index.cjs maps to `release: false`.
+#
+# `versioning-strategy: lockfile-only` is what makes that true and is load
+# bearing, not decoration. Without it Dependabot defaults to `increase`, which
+# rewrites the dependency ranges in package.json whenever a new version falls
+# outside them — and those ranges DO ship to consumers. Such a commit would
+# carry the `actions` scope, cut no release, and then sit on main until some
+# unrelated commit published it under that commit's version bump. A
+# semantic-release major would reach consumers as a patch, which is exactly what
+# the `chore(deps)!:` → major rule in index.cjs exists to prevent.
+#
+# Direct dependency changes still arrive via Renovate as chore(deps) and do cut
+# releases. Renovate also owns security updates to the manifest, since
+# lockfile-only suppresses Dependabot's.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    versioning-strategy: lockfile-only
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "chore(actions)"

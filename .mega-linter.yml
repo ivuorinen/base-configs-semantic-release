@@ -2,6 +2,11 @@
 # Configuration file for MegaLinter
 # See all available variables at
 # https://megalinter.io/configuration/ and in linters documentation
+#
+# MegaLinter runs via ivuorinen/actions/pr-lint, which pins APPLY_FIXES and
+# VALIDATE_ALL_CODEBASE in its own step env. Environment variables win over this
+# file, so do not set them here — they would document behaviour the repo does
+# not have.
 
 # Ensure zizmor runs authenticated: MegaLinter unsets GITHUB_TOKEN for linters
 # unless listed here, which left zizmor unauthenticated and failing
@@ -10,10 +15,8 @@
 ACTION_ZIZMOR_UNSECURED_ENV_VARIABLES:
   - GITHUB_TOKEN
 
-APPLY_FIXES: all
 SHOW_ELAPSED_TIME: false # Show elapsed time at the end of MegaLinter run
 PARALLEL: true
-VALIDATE_ALL_CODEBASE: true
 FILEIO_REPORTER: false # Generate file.io report
 GITHUB_STATUS_REPORTER: true # Generate GitHub status report
 IGNORE_GENERATED_FILES: true # Ignore generated files
@@ -21,20 +24,21 @@ PRINT_ALPACA: false # Print Alpaca logo in console
 SARIF_REPORTER: true # Generate SARIF report
 SHOW_SKIPPED_LINTERS: false # Show skipped linters in MegaLinter log
 
-DISABLE_LINTERS:
-  - REPOSITORY_DEVSKIM
-
+# ENABLE_LINTERS is an allowlist — anything not listed here is disabled, so
+# there is no need for a matching DISABLE_LINTERS.
 ENABLE_LINTERS:
-  - YAML_YAMLLINT
-  - MARKDOWN_MARKDOWNLINT
+  - ACTION_ACTIONLINT
+  - ACTION_ZIZMOR
   - JAVASCRIPT_ES
-  - TYPESCRIPT_ES
+  - MARKDOWN_MARKDOWNLINT
+  - YAML_YAMLLINT
 
 YAML_YAMLLINT_CONFIG_FILE: .yamllint.yml
 YAML_YAMLLINT_FILTER_REGEX_EXCLUDE: CHANGELOG\.md
 MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdownlint.json
-JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
-TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
+# JAVASCRIPT_ES autodetects eslint.config.mjs — do not point it at a config path.
 
+# .github/workflows is deliberately NOT excluded: actionlint and zizmor exist to
+# lint exactly those files.
 FILTER_REGEX_EXCLUDE: >
-  (node_modules|\.automation/test|docs/json-schemas|\.github/workflows)
+  (node_modules|\.automation/test|docs/json-schemas)

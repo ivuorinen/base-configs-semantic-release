@@ -1,0 +1,50 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+#
+# The single definition of "run the test suite". Called by pr-lint.yml (so PRs
+# fail before merge) and by publish.yml (so a release cannot ship past a broken
+# suite). It exists as a reusable workflow rather than a copied job because the
+# two gates must not drift: if the pre-merge gate tests something different from
+# the pre-publish gate, the weaker of the two decides what reaches npm.
+name: Test
+
+on:
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read # to check out the repository
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Enable corepack
+        shell: sh
+        # Use the Corepack the runner already provides instead of installing a
+        # floating copy from npm.
+        run: corepack enable
+
+      # --mode=skip-build: Yarn v2+ runs dependency lifecycle scripts on install
+      # by default, which is arbitrary third-party code execution on the runner.
+      # Nothing in this tree needs a build step — the suite is green without it.
+      - name: Install Dependencies
+        shell: bash
+        run: yarn install --immutable --mode=skip-build
+
+      - name: Run Tests
+        shell: bash
+        run: yarn test

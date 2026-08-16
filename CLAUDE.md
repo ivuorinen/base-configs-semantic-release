@@ -6,16 +6,31 @@ Shareable semantic-release configuration using the `conventionalcommits` preset,
 
 - `index.cjs` — the shared config (commit-analyzer rules, release-notes types, plugin chain)
 - `wrapper.mjs` — ESM re-export of `index.cjs`
+- `index.d.ts` — published type declarations; typed `Options`, not `GlobalConfig`
 - `scripts/postinstall.cjs` — auto-creates `.releaserc.json` in consuming projects
 - `.releaserc.json` — this repo's own release config, extends `./index.cjs`
+- `tsconfig.json` — exists only to typecheck `index.d.ts`
+- `test/release-rules.test.mjs` — asserts the release each commit pattern produces
+- `test/config-shape.test.mjs` — asserts the plugin chain, preset, and exports map
+- `test/postinstall.test.mjs` — asserts the postinstall scaffold, including that it never fails a consumer's install
 
 ## Verification
 
 ```sh
-node -e "console.log(JSON.stringify(require('./index.cjs'), null, 2))"
+yarn test
 ```
 
-No test suite — verify config loads and inspect the output.
+Runs `tsc --noEmit` over `index.d.ts`, then `node --test` over `test/**/*.test.mjs`.
+The suite feeds real commit messages through `@semantic-release/commit-analyzer` and
+asserts the exact release each one cuts, plus the config shape and the postinstall
+behaviour. Always run this after touching `index.cjs` — the config load check below
+passes for any syntactically valid object, including one with a release rule deleted.
+
+```sh
+yarn lint        # eslint
+yarn typecheck   # tsc --noEmit, also run as part of yarn test
+node -e "console.log(JSON.stringify(require('./index.cjs'), null, 2))"
+```
 
 ## Commit Conventions
 
@@ -40,7 +55,25 @@ Pre-commit hooks enforce: trailing whitespace, YAML/JSON validation, markdownlin
 
 ```sh
 pre-commit run --all-files
+yarn lint
 ```
+
+CI runs the same suite through the reusable `.github/workflows/test.yml`, called by
+both `pr-lint.yml` and `publish.yml` so the pre-merge and pre-publish gates cannot drift.
+
+## Dependency Policy
+
+`semantic-release` is a **hard `dependency`, deliberately — not a `peerDependency`**.
+Like the other `base-configs-*` projects, this package is "install it and get the
+required tooling instantly": a consumer adds one devDependency and has a working
+release pipeline, with no second install step. Do not "fix" this into a peer
+dependency; the extra install weight is the point.
+
+Plugins that `semantic-release` already ships (`commit-analyzer`,
+`release-notes-generator`, `npm`, `github`) are **not** declared here — they
+resolve from its own tree, and pinning them separately only creates version drift
+when `semantic-release` moves. `conventional-changelog-conventionalcommits` is the
+exception and must stay direct (see Gotchas).
 
 ## Gotchas
 

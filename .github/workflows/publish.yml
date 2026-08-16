@@ -6,14 +6,13 @@ on:
     branches:
       - main
 
+# Releases must not be cancelled mid-run, so disable cancel-in-progress.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
+# Deny-by-default at the workflow level; each job grants only what it needs.
 permissions: {}
-
-env:
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
   Linter:
@@ -21,59 +20,94 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      statuses: write # to update commit statuses
-      contents: read # to check out the repository
-      packages: read # to read packages
+      statuses: write # required to report the lint status
+      contents: read # required to checkout the repository
+      packages: read # required to read packages metadata
 
     steps:
       - name: Run PR Lint
         # https://github.com/ivuorinen/actions
-        uses: ivuorinen/actions/pr-lint@94a4f68a6b95ecc1677fbcac1683119fd869adf7 # v2026.07.04
+        uses: ivuorinen/actions/pr-lint@08beec49e790e0093f5df8063f3a484ac5a75e34 # v2026.08.12
+
+  # Shared with pr-lint.yml so the pre-merge and pre-publish gates cannot drift.
+  # Unlike the sibling base-configs-* repos this runs as a gating job rather than
+  # a step inside publish: the suite needs an install and a typecheck, so it is
+  # not the dependency-free `node --test` those repos can inline.
+  test:
+    name: Test
+    # Required, not redundant with the permissions inside test.yml. This
+    # workflow denies by default at the top, a called workflow can never hold
+    # more than its caller grants, and the calling job is where that ceiling is
+    # set — without this the run fails at startup before any job begins.
+    permissions:
+      contents: read # to check out the repository
+    uses: ./.github/workflows/test.yml
 
   publish:
     name: Publish
     runs-on: ubuntu-latest
     needs:
       - Linter
+      - test
+    # Deliberately no `environment:`. Declaring one adds `:environment:<name>`
+    # to the OIDC token's subject claim, and npm's trusted publisher for this
+    # package was established from a publish.yml that had no environment at all
+    # (rekor logIndex 2429132485, commit 563f77a). Changing the subject risks
+    # breaking registry authentication for a gate that adds nothing here: the
+    # workflow already only triggers on push to main.
     permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance
+      contents: read # required to checkout the repository
+      id-token: write # required for npm OIDC Trusted Publishing
+      # No contents/issues/pull-requests write: semantic-release authenticates
+      # as secrets.PAT, not the automatic token. The github plugin reads the PAT
+      # from env and the tag push uses a token-bearing remote URL, so the
+      # automatic token is never exercised here.
 
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          persist-credentials: false
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup Node.js Environment
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          always-auth: true
+          # No auth token: npm authenticates to the registry via OIDC Trusted
+          # Publishing (requires a trusted publisher configured on npmjs.com).
           node-version-file: ".nvmrc"
           registry-url: "https://registry.npmjs.org"
           scope: "@ivuorinen"
 
-      - name: Install and enable corepack
+      - name: Enable corepack
         shell: sh
-        run: npm install -g corepack --force && corepack enable
+        # Use the Corepack the runner already provides instead of installing a
+        # floating copy from npm in this privileged release job.
+        run: corepack enable
 
+      # Keyed on everything that changes the tree, not just the lockfile: a
+      # .nvmrc bump without a yarn.lock change would otherwise hit a stale cache
+      # and skip the install, publishing a tree built for another Node.
       - name: Cache Node Modules
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('**/yarn.lock') }}
+          key: node-modules-${{ runner.os }}-${{ hashFiles('.nvmrc', 'yarn.lock') }}
 
+      # --mode=skip-build: Yarn v2+ runs dependency lifecycle scripts on install
+      # by default. This job holds the release credentials, so that is the worst
+      # place to execute arbitrary third-party install code. Nothing in this tree
+      # needs a build step.
       - name: Install Dependencies
         shell: bash
         if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install
+        run: yarn install --immutable --mode=skip-build
 
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0
         env:
+          # No NPM_TOKEN: @semantic-release/npm publishes via OIDC Trusted
+          # Publishing using the id-token: write permission above, which also
+          # generates the provenance attestation without NPM_CONFIG_PROVENANCE.
           GITHUB_TOKEN: ${{ secrets.PAT }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

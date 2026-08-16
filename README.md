@@ -61,7 +61,11 @@ After installing it, a _`.releaserc.json`_ file will be created automatically in
 Ensure that your CI configuration has the following **_secret_** environment variables set:
 
 - [`GH_TOKEN`][gh-token-link] with [`public_repo`][gh-scopes-link] access or `GITHUB_TOKEN`.
-- [`NPM_TOKEN`][npm-token-link]
+- [`NPM_TOKEN`][npm-token-link] — **only if you are not using npm trusted publishing.**
+  With a [trusted publisher][npm-trusted-publishing-link] configured for your package and
+  `id-token: write` granted, `@semantic-release/npm` authenticates over OIDC and needs no
+  npm token at all. That is the recommended setup: there is no long-lived credential to
+  leak or rotate, and provenance is generated automatically.
 
 See each [plugin](#plugins) documentation for required installation and configuration steps.
 
@@ -75,27 +79,32 @@ on:
     branches:
       - main
 
+permissions: {}
+
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-      id-token: write
+      contents: write # to publish a GitHub release
+      issues: write # to comment on released issues
+      pull-requests: write # to comment on released pull requests
+      id-token: write # for npm provenance via OIDC
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          always-auth: true
-          node-version: 20
+          # No auth token: npm authenticates via OIDC trusted publishing.
+          # Reads the Node version from a committed .nvmrc, so it never goes stale.
+          # No .nvmrc? Swap this line for: node-version: 24
+          node-version-file: ".nvmrc"
           registry-url: "https://registry.npmjs.org"
 
       - name: Install Dependencies
@@ -104,9 +113,27 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 ```
+
+This example assumes [npm trusted publishing][npm-trusted-publishing-link], which is why
+it carries no `NPM_TOKEN`: `id-token: write` lets `@semantic-release/npm` authenticate to
+the registry over OIDC, and provenance is attached automatically — `NPM_CONFIG_PROVENANCE`
+is not needed either. Without a trusted publisher configured, add `NPM_TOKEN:
+${{ secrets.NPM_TOKEN }}` and `NPM_CONFIG_PROVENANCE: true` back to the `Release` step.
+
+Actions are pinned to full commit SHAs rather than `@v4`-style tags: a tag is
+mutable, and this workflow runs with `contents: write` and registry publish rights
+in scope.
+
+The Node version comes from `.nvmrc` — one file your editor, your local shell and
+CI all read, so the version cannot drift between them. `setup-node` fails outright
+if the file is absent, so swap in the commented `node-version: 24` line instead if
+you do not keep one.
+
+Either way, do not pin a release job to Node 20. It satisfies this package's
+`engines` floor of `>=20`, but it is end-of-life and receives no security patches,
+and the release job is the one holding your `NPM_TOKEN`.
 
 ## Documentations
 
@@ -126,10 +153,11 @@ Distributed under the MIT License. See [LICENSE][license-link] for more informat
 [gh-token-link]: https://github.com/settings/tokens/new?scopes=public_repo
 [issue-link]: https://github.com/ivuorinen/base-configs-semantic-release/issues
 [license-badge]: https://img.shields.io/github/license/ivuorinen/base-configs-semantic-release?style=flat-square&labelColor=292a44&color=663399
-[license-link]: ./LICENSE
+[license-link]: ./LICENSE.md
 [npm-badge]: https://img.shields.io/npm/v/@ivuorinen/semantic-release-config?style=flat-square&labelColor=292a44&color=663399
 [npm-link]: https://www.npmjs.com/package/@ivuorinen/semantic-release-config
 [npm-token-link]: https://docs.npmjs.com/about-access-tokens
+[npm-trusted-publishing-link]: https://docs.npmjs.com/trusted-publishers
 [pull-request-link]: https://github.com/ivuorinen/base-configs-semantic-release/pulls
 [renovate-link]: https://docs.renovatebot.com/
 [semantic-release-docs-link]: https://semantic-release.gitbook.io/
