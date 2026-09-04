@@ -277,8 +277,8 @@ __metadata:
   linkType: hard
 
 "@ivuorinen/eslint-config@npm:^1.5.6":
-  version: 1.5.8
-  resolution: "@ivuorinen/eslint-config@npm:1.5.8"
+  version: 1.5.10
+  resolution: "@ivuorinen/eslint-config@npm:1.5.10"
   dependencies:
     "@eslint/js": "npm:^10.0.1"
     "@ivuorinen/config-checker": "npm:^2.2.1"
@@ -288,7 +288,7 @@ __metadata:
     eslint-plugin-jest: "npm:^29.15.1"
     globals: "npm:^17.4.0"
     typescript: "npm:>=4.2.0"
-  checksum: 10c0/ba0daca72b2de3b16a989787e8a75ecea4d32e5c2a28f0c51cbed4f3a5111664d673783e26a838d4e5947ab7325ff04a6515870f812566d4dd58b541150156df
+  checksum: 10c0/8a66524ad7e690b98deae0af2c4bf46b4a0c5d9a50dfb03b17680c3e385bea569a64ba5eeefa8e32ac418fb7b748f619eee2db5bc381ba47a703a0d6c7100938
   languageName: node
   linkType: hard
 
