@@ -292,9 +292,9 @@ __metadata:
   linkType: hard
 
 "@ivuorinen/config-checker@npm:^2.2.1, @ivuorinen/config-checker@npm:^2.2.17":
-  version: 2.6.13
-  resolution: "@ivuorinen/config-checker@npm:2.6.13"
-  checksum: 10c0/bc00b4b14ada948a8d99d5beaf97f10d6cad95f2ce1664e1175df3b97284628e3bd5da9bc9a296e03d3f8b6c2134eb8fd80b124bb815596327744aad19cb2f99
+  version: 2.6.15
+  resolution: "@ivuorinen/config-checker@npm:2.6.15"
+  checksum: 10c0/7219325ecc32bdef6370a191b564129afee52efcb6946d343b246304ed5e35784f868bdfbb44ec9da5896eead39af6a904d4ef650d45d4f1a5013068b32a1b84
   languageName: node
   linkType: hard
 
