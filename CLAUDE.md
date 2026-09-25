@@ -12,6 +12,7 @@ Shareable semantic-release configuration using the `conventionalcommits` preset,
 - `tsconfig.json` — exists only to typecheck `index.d.ts`
 - `test/release-rules.test.mjs` — asserts the release each commit pattern produces
 - `test/config-shape.test.mjs` — asserts the plugin chain, preset, and exports map
+- `test/release-notes.test.mjs` — renders real release notes, so a preset the writer cannot render fails the suite
 - `test/postinstall.test.mjs` — asserts the postinstall scaffold, including that it never fails a consumer's install
 
 ## Verification
@@ -73,13 +74,20 @@ Plugins that `semantic-release` already ships (`commit-analyzer`,
 `release-notes-generator`, `npm`, `github`) are **not** declared here — they
 resolve from its own tree, and pinning them separately only creates version drift
 when `semantic-release` moves. `conventional-changelog-conventionalcommits` is the
-exception and must stay direct (see Gotchas).
+exception and must stay direct (see Gotchas). `commit-analyzer` and
+`release-notes-generator` appear as devDependencies only because the tests import
+them, on the same range `semantic-release` uses.
 
 ## Gotchas
 
 - The `conventionalcommits` preset requires `conventional-changelog-conventionalcommits` as a direct dependency — without it the config silently falls back to angular
 - The `angular` preset cannot parse the `!` in `chore(deps)!:` — commits become invisible to semantic-release
 - Plugin order matters: commit-analyzer must come first, release-notes-generator second
+- `conventional-changelog-conventionalcommits` must stay on the major that `semantic-release`'s own
+  `release-notes-generator` can render. 10.x needs `conventional-changelog-writer@9`, but release-notes-generator 14
+  ships writer 8: 10.0–10.3 rendered notes with only the version heading, and 10.4 fails the release with
+  `Missing helper`. Keep `^9` until a stable release-notes-generator moves to writer 9;
+  `test/release-notes.test.mjs` renders real notes and fails on a mismatch
 
 ---
 
