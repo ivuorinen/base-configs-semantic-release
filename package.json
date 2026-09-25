@@ -10,7 +10,7 @@
     "url": "https://github.com/ivuorinen/base-configs-semantic-release/issues"
   },
   "engines": {
-    "node": ">=20"
+    "node": "^22.19.0 || >=24.10.0"
   },
   "files": [
     "index.cjs",
@@ -61,10 +61,13 @@
     "semantic-release": "^25.0.5"
   },
   "devDependencies": {
-    "@ivuorinen/eslint-config": "^1.5.6",
+    "@eslint/js": "^10.0.1",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@types/node": "^26.2.0",
     "eslint": "^10.0.0",
+    "eslint-config-eslint": "^14.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.4.0",
     "typescript": "^7.0.2"
   },
   "resolutions": {
