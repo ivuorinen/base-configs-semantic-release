@@ -48,13 +48,21 @@ npm install @ivuorinen/semantic-release-config --save-dev
 yarn add @ivuorinen/semantic-release-config --dev
 ```
 
-After installing it, a _`.releaserc.json`_ file will be created automatically in the project's root folder with the following configuration:
+Create a _`.releaserc.json`_ in the project's root folder with the following configuration:
 
 ```json
 {
   "extends": ["@ivuorinen/semantic-release-config"]
 }
 ```
+
+With npm, a `postinstall` script writes exactly this file when the project has no semantic-release config yet (npm 11
+warns that the script is not covered by `allowScripts`). Yarn 4 does not run dependency install scripts, so no file is
+written. pnpm refuses unapproved install scripts and fails the install until you allow this package with
+`pnpm approve-builds`. In both cases create the file by hand as above — without it semantic-release silently falls
+back to its built-in defaults (angular preset, none of the release rules above).
+
+Requires Node.js `^22.19.0 || >=24.10.0`, the floor of `semantic-release` 25 and its dependencies.
 
 ## Configuration
 
@@ -131,9 +139,9 @@ CI all read, so the version cannot drift between them. `setup-node` fails outrig
 if the file is absent, so swap in the commented `node-version: 24` line instead if
 you do not keep one.
 
-Either way, do not pin a release job to Node 20. It satisfies this package's
-`engines` floor of `>=20`, but it is end-of-life and receives no security patches,
-and the release job is the one holding your `NPM_TOKEN`.
+Either way, the release job's Node must satisfy this package's `engines` floor of
+`^22.19.0 || >=24.10.0` — `semantic-release` 25 does not run on anything older — and
+the release job is the one holding your release credentials.
 
 ## Documentations
 

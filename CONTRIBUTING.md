@@ -13,7 +13,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) >= 20
+- [Node.js](https://nodejs.org/) `^22.19.0 || >=24.10.0` (the floor of `semantic-release` 25)
 - [Yarn](https://yarnpkg.com/) 4.x (enabled via corepack)
 - [pre-commit](https://pre-commit.com/) for git hooks
 
