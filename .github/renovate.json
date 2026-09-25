@@ -31,6 +31,13 @@
         "major"
       ],
       "commitMessagePrefix": "chore(actions): "
+    },
+    {
+      "description": "conventional-changelog-conventionalcommits 10 needs conventional-changelog-writer 9, but semantic-release's release-notes-generator 14 ships writer 8: 10.0-10.3 render notes with only the version heading and 10.4 fails the release. Hold it below 10 until a stable release-notes-generator moves to writer 9; test/release-notes.test.mjs fails on a mismatch.",
+      "matchPackageNames": [
+        "conventional-changelog-conventionalcommits"
+      ],
+      "allowedVersions": "<10"
     }
   ]
 }
