@@ -20,6 +20,15 @@ rules:
     # environment, at which point add `environment:` back and drop this ignore.
     ignore:
       - publish.yml
+  self-repository:
+    # The `$/` self-repository form zizmor suggests for the `./` reusable
+    # workflow calls is rejected by actionlint 1.7.12, the latest release,
+    # which pre-commit and PR Lint run; support is tracked in
+    # rhysd/actionlint#711. Switch to `$/` and drop this ignore once an
+    # actionlint release accepts it.
+    ignore:
+      - pr-lint.yml
+      - publish.yml
 #
 # `adhoc-packages` and `use-trusted-publishing` were previously ignored here.
 # Both are now resolved rather than suppressed: the workflows use the Corepack
