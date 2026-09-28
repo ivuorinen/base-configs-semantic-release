@@ -5,34 +5,6 @@
   ],
   "packageRules": [
     {
-      "description": "CI-only bumps must not version the published package. index.cjs maps chore(deps)! to major, so action and pre-commit updates have to carry the actions scope instead.",
-      "matchManagers": [
-        "github-actions",
-        "pre-commit"
-      ],
-      "semanticCommitScope": "actions"
-    },
-    {
-      "description": "devDependencies never reach consumers, so updating one must never release. The literal prefix is needed because the shared preset's major rule sets commitMessagePrefix 'chore(deps)!: ', which a packageRule can only override, not unset; index.cjs maps 'chore(actions)' to release: false. The separate group keeps dev updates out of groups that also hold runtime dependencies (the preset's semantic-release group holds both semantic-release and @semantic-release/commit-analyzer here), whose PR title would otherwise decide the release for both.",
-      "matchDepTypes": [
-        "devDependencies"
-      ],
-      "semanticCommitType": "chore",
-      "semanticCommitScope": "actions",
-      "commitMessagePrefix": "chore(actions): ",
-      "groupName": "devDependencies"
-    },
-    {
-      "description": "pre-commit hook majors: the shared preset restores the 'chore(actions): ' prefix for github-actions majors only, so without this a hook major still arrives as 'chore(deps)!: ' and releases a major.",
-      "matchManagers": [
-        "pre-commit"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "commitMessagePrefix": "chore(actions): "
-    },
-    {
       "description": "conventional-changelog-conventionalcommits 10 needs conventional-changelog-writer 9, but semantic-release's release-notes-generator 14 ships writer 8: 10.0-10.3 render notes with only the version heading and 10.4 fails the release. Hold it below 10 until a stable release-notes-generator moves to writer 9; test/release-notes.test.mjs fails on a mismatch.",
       "matchPackageNames": [
         "conventional-changelog-conventionalcommits"
