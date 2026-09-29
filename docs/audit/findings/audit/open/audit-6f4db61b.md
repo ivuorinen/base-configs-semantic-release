@@ -65,9 +65,9 @@ only on `push` to `main`, and the job no longer passes `NPM_TOKEN` — it
 authenticates to npm via OIDC trusted publishing — so `secrets.PAT` is the only
 secret the job still reads.
 
-The `NPM_TOKEN` repository secret itself is still configured. It is scheduled
-for deletion once the first release publishes green under the OIDC workflow, so
-until that cleanup lands it remains reachable by any job that asks for it.
+The `NPM_TOKEN` repository secret was deleted on 2026-09-26, after releases had
+published green under the OIDC workflow (most recently v3.0.0 the same day), so
+no job can reach it any more.
 
 What it would cost is concrete. A GitHub job that declares `environment: <name>`
 gets `:environment:<name>` appended to the OIDC token's `sub` claim. npm matches
