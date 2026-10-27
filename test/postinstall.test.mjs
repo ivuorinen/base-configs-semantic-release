@@ -59,6 +59,9 @@ test("writes .releaserc.json into INIT_CWD when no config exists", () => {
     assert.strictEqual(run.status, 0);
     assert.ok(run.exists, ".releaserc.json should have been created");
     assert.deepStrictEqual(JSON.parse(run.read()), EXPECTED);
+    // The file lands in the consumer's repo, where EditorConfig and formatters
+    // expect a final newline.
+    assert.ok(run.read().endsWith("}\n"), ".releaserc.json should end with a newline");
   } finally {
     run.cleanup();
   }

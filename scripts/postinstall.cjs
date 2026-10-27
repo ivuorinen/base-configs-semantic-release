@@ -40,7 +40,9 @@ const fileConfigObject = {
 };
 
 try {
-  fs.writeFileSync(filePath, JSON.stringify(fileConfigObject, undefined, 2), { flag: "wx" });
+  // The trailing newline keeps the generated file passing the consumer's
+  // EditorConfig (insert_final_newline) and formatter checks.
+  fs.writeFileSync(filePath, `${JSON.stringify(fileConfigObject, undefined, 2)}\n`, { flag: "wx" });
 } catch (err) {
   // EEXIST is the benign race with the check above. Everything else — EACCES on
   // a root-owned workspace, EROFS in a read-only container build, ENOSPC — is
