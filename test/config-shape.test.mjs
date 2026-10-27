@@ -5,6 +5,7 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 
 import wrapped from "../wrapper.mjs";
+import { types } from "../preset.mjs";
 
 const require = createRequire(import.meta.url);
 const config = require("../index.cjs");
@@ -28,12 +29,21 @@ test("plugin chain is exactly the documented order", () => {
   ]);
 });
 
-// The conventionalcommits preset is what parses the `!` in `chore(deps)!:`.
-// Dropping conventional-changelog-conventionalcommits makes this silently fall
-// back to angular, which cannot.
-test("both analyzing plugins use the conventionalcommits preset", () => {
-  assert.strictEqual(optionsFor("@semantic-release/commit-analyzer").preset, "conventionalcommits");
-  assert.strictEqual(optionsFor("@semantic-release/release-notes-generator").preset, "conventionalcommits");
+// The conventionalcommits preset is what parses the `!` in `chore(deps)!:`;
+// angular, the plugins' fallback, cannot. It must arrive as a path to
+// preset.mjs: a `preset` name is resolved from the plugin's own location, which
+// in a consumer's tree finds the hoisted copy, not this package's dependency.
+test("both analyzing plugins load preset.mjs by path, not a preset by name", () => {
+  const presetPath = fileURLToPath(new URL("../preset.mjs", import.meta.url));
+  for (const name of ["@semantic-release/commit-analyzer", "@semantic-release/release-notes-generator"]) {
+    assert.strictEqual(optionsFor(name).config, presetPath, `${name} does not load preset.mjs`);
+    assert.ok(!Object.hasOwn(optionsFor(name), "preset"), `${name} names a preset to resolve`);
+  }
+});
+
+// A consumer's release imports preset.mjs from the installed tarball.
+test("the preset module the plugins load is published", () => {
+  assert.ok(pkg.files.includes("preset.mjs"), 'preset.mjs would not be published — add it to package.json "files"');
 });
 
 test("release rules are exactly the three intended rules, in order", () => {
@@ -53,7 +63,7 @@ test("no release rule matches without a scope", () => {
 });
 
 test("release-notes sections and hidden types are complete", () => {
-  assert.deepStrictEqual(optionsFor("@semantic-release/release-notes-generator").presetConfig.types, [
+  assert.deepStrictEqual(types, [
     { type: "feat", section: "Features" },
     { type: "fix", section: "Bug Fixes" },
     { type: "perf", section: "Performance" },
@@ -69,7 +79,6 @@ test("release-notes sections and hidden types are complete", () => {
 });
 
 test("every commit type that cuts a release is visible in the notes", () => {
-  const types = optionsFor("@semantic-release/release-notes-generator").presetConfig.types;
   for (const type of ["feat", "fix", "perf", "chore"]) {
     const entry = types.find((t) => t.type === type);
     assert.ok(entry, `${type} missing from release-notes types`);

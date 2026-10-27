@@ -4,7 +4,8 @@ Shareable semantic-release configuration using the `conventionalcommits` preset,
 
 ## Key Files
 
-- `index.cjs` — the shared config (commit-analyzer rules, release-notes types, plugin chain)
+- `index.cjs` — the shared config (commit-analyzer rules, plugin chain)
+- `preset.mjs` — the conventionalcommits preset both analyzing plugins load by path, with the release-notes sections
 - `wrapper.mjs` — ESM re-export of `index.cjs`
 - `index.d.ts`, `index.d.cts`, `index.d.mts` — published type declarations; typed `Options`, not `GlobalConfig`.
   `exports` serves `.d.mts` to `import` and `.d.cts` to `require`; keep all three in step
@@ -14,6 +15,8 @@ Shareable semantic-release configuration using the `conventionalcommits` preset,
 - `test/release-rules.test.mjs` — asserts the release each commit pattern produces
 - `test/config-shape.test.mjs` — asserts the plugin chain, preset, and exports map
 - `test/release-notes.test.mjs` — renders real release notes, so a preset the writer cannot render fails the suite
+- `test/preset-resolution.test.mjs` — runs both plugins from a consumer-shaped tree with a different preset hoisted
+  to the root, which is how base-configs consumers' releases failed
 - `test/postinstall.test.mjs` — asserts the postinstall scaffold, including that it never fails a consumer's install
 
 ## Verification
@@ -82,7 +85,12 @@ them, on the same range `semantic-release` uses.
 ## Gotchas
 
 - The `conventionalcommits` preset requires `conventional-changelog-conventionalcommits` as a direct dependency —
-  without it the config silently falls back to angular
+  `preset.mjs` imports it, and without it every release fails on that import
+- Both analyzing plugins get the preset as `config: <absolute path to preset.mjs>`, never
+  `preset: "conventionalcommits"`. A named preset is resolved from the plugin's own location, which in a consumer's
+  tree finds the hoisted copy rather than this package's: every `@ivuorinen/base-configs` install hoists the 10.x of
+  `@commitlint/config-conventional`, and releases failed with `Missing helper`. A `config` module is called without
+  `presetConfig`, so the release-notes sections live in `preset.mjs`
 - The `angular` preset cannot parse the `!` in `chore(deps)!:` — commits become invisible to semantic-release
 - Plugin order matters: commit-analyzer must come first, release-notes-generator second
 - `conventional-changelog-conventionalcommits` must stay on the major that `semantic-release`'s own

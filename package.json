@@ -17,6 +17,7 @@
     "index.d.cts",
     "index.d.mts",
     "index.d.ts",
+    "preset.mjs",
     "wrapper.mjs",
     "scripts/*"
   ],
