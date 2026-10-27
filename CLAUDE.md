@@ -81,7 +81,8 @@ them, on the same range `semantic-release` uses.
 
 ## Gotchas
 
-- The `conventionalcommits` preset requires `conventional-changelog-conventionalcommits` as a direct dependency — without it the config silently falls back to angular
+- The `conventionalcommits` preset requires `conventional-changelog-conventionalcommits` as a direct dependency —
+  without it the config silently falls back to angular
 - The `angular` preset cannot parse the `!` in `chore(deps)!:` — commits become invisible to semantic-release
 - Plugin order matters: commit-analyzer must come first, release-notes-generator second
 - `conventional-changelog-conventionalcommits` must stay on the major that `semantic-release`'s own
@@ -94,7 +95,8 @@ them, on the same range `semantic-release` uses.
 
 ## context-mode — MANDATORY routing rules
 
-You have context-mode MCP tools available. These rules are NOT optional — they protect your context window from flooding. A single unrouted command can dump 56 KB into context and waste the entire session.
+You have context-mode MCP tools available. These rules are NOT optional — they protect your context window from
+flooding. A single unrouted command can dump 56 KB into context and waste the entire session.
 
 ### BLOCKED commands — do NOT attempt these
 
@@ -108,7 +110,8 @@ Instead use:
 
 #### Inline HTTP — BLOCKED
 
-Any Bash command containing `fetch('http`, `requests.get(`, `requests.post(`, `http.get(`, or `http.request(` is intercepted and replaced with an error message. Do NOT retry with Bash.
+Any Bash command containing `fetch('http`, `requests.get(`, `requests.post(`, `http.get(`, or `http.request(` is
+intercepted and replaced with an error message. Do NOT retry with Bash.
 Instead use:
 
 - `ctx_execute(language, code)` to run HTTP calls in sandbox — only stdout enters context
@@ -133,7 +136,8 @@ For everything else, use:
 #### Read (for analysis)
 
 If you are reading a file to **Edit** it → Read is correct (Edit needs content in context).
-If you are reading to **analyze, explore, or summarize** → use `ctx_execute_file(path, language, code)` instead. Only your printed summary enters context. The raw file content stays in the sandbox.
+If you are reading to **analyze, explore, or summarize** → use `ctx_execute_file(path, language, code)` instead. Only
+your printed summary enters context. The raw file content stays in the sandbox.
 
 #### Grep (large results)
 
@@ -141,7 +145,8 @@ Grep results can flood context. Use `ctx_execute(language: "shell", code: "grep 
 
 ### Tool selection hierarchy
 
-1. **GATHER**: `ctx_batch_execute(commands, queries)` — Primary tool. Runs all commands, auto-indexes output, returns search results. ONE call replaces 30+ individual calls.
+1. **GATHER**: `ctx_batch_execute(commands, queries)` — Primary tool. Runs all commands, auto-indexes output, returns
+    search results. ONE call replaces 30+ individual calls.
 2. **FOLLOW-UP**: `ctx_search(queries: ["q1", "q2", ...])` — Query indexed content. Pass ALL questions as array in ONE call.
 3. **PROCESSING**: `ctx_execute(language, code)` | `ctx_execute_file(path, language, code)` — Sandbox execution. Only stdout enters context.
 4. **WEB**: `ctx_fetch_and_index(url, source)` then `ctx_search(queries)` — Fetch, chunk, index, query. Raw HTML never enters context.

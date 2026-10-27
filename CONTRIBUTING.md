@@ -21,56 +21,56 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 1. Fork and clone the repository:
 
-   ```sh
-   git clone https://github.com/<your-username>/base-configs-semantic-release.git
-   cd base-configs-semantic-release
-   ```
+    ```sh
+    git clone https://github.com/<your-username>/base-configs-semantic-release.git
+    cd base-configs-semantic-release
+    ```
 
 2. Install dependencies:
 
-   ```sh
-   corepack enable
-   yarn install
-   ```
+    ```sh
+    corepack enable
+    yarn install
+    ```
 
 3. Install pre-commit hooks:
 
-   ```sh
-   pre-commit install
-   ```
+    ```sh
+    pre-commit install
+    ```
 
 ## Development Workflow
 
 1. Create a feature branch from `main`:
 
-   ```sh
-   git checkout -b feat/your-change
-   ```
+    ```sh
+    git checkout -b feat/your-change
+    ```
 
 2. Make your changes. The key files are:
-   - `index.cjs` — the shared semantic-release configuration
-   - `wrapper.mjs` — ESM wrapper that re-exports `index.cjs`
-   - `index.d.ts`, `index.d.cts`, `index.d.mts` — published type declarations (`exports` serves `.d.mts` to
-     `import` and `.d.cts` to `require`); update all three alongside `index.cjs`
-   - `scripts/postinstall.cjs` — auto-creates `.releaserc.json` in consuming projects
+    - `index.cjs` — the shared semantic-release configuration
+    - `wrapper.mjs` — ESM wrapper that re-exports `index.cjs`
+    - `index.d.ts`, `index.d.cts`, `index.d.mts` — published type declarations (`exports` serves `.d.mts` to
+      `import` and `.d.cts` to `require`); update all three alongside `index.cjs`
+    - `scripts/postinstall.cjs` — auto-creates `.releaserc.json` in consuming projects
 
 3. Run the tests:
 
-   ```sh
-   yarn test
-   ```
+    ```sh
+    yarn test
+    ```
 
-   This typechecks the three declaration files, then runs four suites: real commit
-   messages fed through `@semantic-release/commit-analyzer` asserting the exact
-   release each one cuts, release notes rendered through the `conventionalcommits`
-   preset, the config shape and exports map, and the postinstall scaffold. Any
-   change to `index.cjs` needs them to pass.
+    This typechecks the three declaration files, then runs four suites: real commit
+    messages fed through `@semantic-release/commit-analyzer` asserting the exact
+    release each one cuts, release notes rendered through the `conventionalcommits`
+    preset, the config shape and exports map, and the postinstall scaffold. Any
+    change to `index.cjs` needs them to pass.
 
 4. Optionally, inspect the resolved config:
 
-   ```sh
-   node -e "console.log(JSON.stringify(require('./index.cjs'), null, 2))"
-   ```
+    ```sh
+    node -e "console.log(JSON.stringify(require('./index.cjs'), null, 2))"
+    ```
 
 ## Code Quality
 
