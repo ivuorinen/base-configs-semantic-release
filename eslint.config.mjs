@@ -9,9 +9,8 @@ import { createRequire } from "node:module";
 // under MegaLinter's bundled install; createRequire resolves them from the
 // local node_modules.
 //
-// Kept in step with base-configs-eslint/index.cjs by hand. The one deliberate
-// difference from the published 1.5.x config: no `ecmaVersion: 12` pin, which
-// made newer syntax a fatal parse error (fixed upstream in the same change).
+// Kept in step with base-configs-eslint/index.cjs by hand. The two are
+// identical rule for rule; any difference introduced here is drift.
 const require = createRequire(import.meta.url);
 const globals = require("globals");
 const configEslint = require("eslint-config-eslint");

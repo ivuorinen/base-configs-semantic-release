@@ -6,10 +6,11 @@ Shareable semantic-release configuration using the `conventionalcommits` preset,
 
 - `index.cjs` — the shared config (commit-analyzer rules, release-notes types, plugin chain)
 - `wrapper.mjs` — ESM re-export of `index.cjs`
-- `index.d.ts` — published type declarations; typed `Options`, not `GlobalConfig`
+- `index.d.ts`, `index.d.cts`, `index.d.mts` — published type declarations; typed `Options`, not `GlobalConfig`.
+  `exports` serves `.d.mts` to `import` and `.d.cts` to `require`; keep all three in step
 - `scripts/postinstall.cjs` — auto-creates `.releaserc.json` in consuming projects
 - `.releaserc.json` — this repo's own release config, extends `./index.cjs`
-- `tsconfig.json` — exists only to typecheck `index.d.ts`
+- `tsconfig.json` — exists only to typecheck the declaration files and `test/types`
 - `test/release-rules.test.mjs` — asserts the release each commit pattern produces
 - `test/config-shape.test.mjs` — asserts the plugin chain, preset, and exports map
 - `test/release-notes.test.mjs` — renders real release notes, so a preset the writer cannot render fails the suite
@@ -21,7 +22,7 @@ Shareable semantic-release configuration using the `conventionalcommits` preset,
 yarn test
 ```
 
-Runs `tsc --noEmit` over `index.d.ts`, then `node --test` over `test/**/*.test.mjs`.
+Runs `tsc --noEmit` over the declaration files, then `node --test` over `test/**/*.test.mjs`.
 The suite feeds real commit messages through `@semantic-release/commit-analyzer` and
 asserts the exact release each one cuts, plus the config shape and the postinstall
 behaviour. Always run this after touching `index.cjs` — the config load check below

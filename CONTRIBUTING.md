@@ -50,7 +50,8 @@ Thank you for your interest in contributing! This guide will help you get starte
 2. Make your changes. The key files are:
    - `index.cjs` — the shared semantic-release configuration
    - `wrapper.mjs` — ESM wrapper that re-exports `index.cjs`
-   - `index.d.ts` — published type declarations; update alongside `index.cjs`
+   - `index.d.ts`, `index.d.cts`, `index.d.mts` — published type declarations (`exports` serves `.d.mts` to
+     `import` and `.d.cts` to `require`); update all three alongside `index.cjs`
    - `scripts/postinstall.cjs` — auto-creates `.releaserc.json` in consuming projects
 
 3. Run the tests:
@@ -59,10 +60,11 @@ Thank you for your interest in contributing! This guide will help you get starte
    yarn test
    ```
 
-   This typechecks `index.d.ts`, then runs three suites: real commit messages fed
-   through `@semantic-release/commit-analyzer` asserting the exact release each one
-   cuts, the config shape and exports map, and the postinstall scaffold. Any change
-   to `index.cjs` needs them to pass.
+   This typechecks the three declaration files, then runs four suites: real commit
+   messages fed through `@semantic-release/commit-analyzer` asserting the exact
+   release each one cuts, release notes rendered through the `conventionalcommits`
+   preset, the config shape and exports map, and the postinstall scaffold. Any
+   change to `index.cjs` needs them to pass.
 
 4. Optionally, inspect the resolved config:
 
