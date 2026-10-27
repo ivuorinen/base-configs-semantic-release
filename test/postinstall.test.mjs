@@ -59,6 +59,9 @@ test("writes .releaserc.json into INIT_CWD when no config exists", () => {
     assert.strictEqual(run.status, 0);
     assert.ok(run.exists, ".releaserc.json should have been created");
     assert.deepStrictEqual(JSON.parse(run.read()), EXPECTED);
+    // The file lands in the consumer's repo, where EditorConfig and formatters
+    // expect a final newline.
+    assert.ok(run.read().endsWith("}\n"), ".releaserc.json should end with a newline");
   } finally {
     run.cleanup();
   }
@@ -143,7 +146,8 @@ test("is idempotent — a second run neither fails nor rewrites", () => {
 // consumer's entire `npm install`. An unwritable target — a read-only container
 // build, a root-owned workspace — must degrade to a message, never to a throw.
 // Skipped for root, which ignores the mode bits and would write anyway.
-test("a read-only target degrades to a message instead of failing the install", { skip: process.getuid?.() === 0 ? "runs as root; mode bits are not enforced" : false }, () => {
+const skipAsRoot = process.getuid?.() === 0 ? "runs as root; mode bits are not enforced" : false;
+test("a read-only target degrades to a message instead of failing the install", { skip: skipAsRoot }, () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "sr-config-readonly-"));
   fs.chmodSync(dir, 0o555);
   try {

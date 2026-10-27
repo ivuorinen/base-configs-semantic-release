@@ -1,12 +1,17 @@
 "use strict";
 
+// Both analyzing plugins load the conventionalcommits preset from preset.mjs by
+// absolute path, not by name, so they get this package's own dependency rather
+// than whichever copy a consumer's tree hoists to its root (see preset.mjs).
+const preset = require.resolve("./preset.mjs");
+
 module.exports = {
   branches: ["main"],
   plugins: [
     [
       "@semantic-release/commit-analyzer",
       {
-        preset: "conventionalcommits",
+        config: preset,
         releaseRules: [
           { breaking: true, type: "chore", scope: "deps", release: "major" },
           { type: "chore", scope: "deps", release: "patch" },
@@ -17,22 +22,7 @@ module.exports = {
     [
       "@semantic-release/release-notes-generator",
       {
-        preset: "conventionalcommits",
-        presetConfig: {
-          types: [
-            { type: "feat", section: "Features" },
-            { type: "fix", section: "Bug Fixes" },
-            { type: "perf", section: "Performance" },
-            { type: "revert", section: "Reverts" },
-            { type: "chore", section: "Maintenance" },
-            { type: "docs", hidden: true },
-            { type: "style", hidden: true },
-            { type: "refactor", hidden: true },
-            { type: "test", hidden: true },
-            { type: "build", hidden: true },
-            { type: "ci", hidden: true },
-          ],
-        },
+        config: preset,
       },
     ],
     "@semantic-release/npm",

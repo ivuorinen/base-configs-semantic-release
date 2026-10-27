@@ -4,15 +4,19 @@ Shareable semantic-release configuration using the `conventionalcommits` preset,
 
 ## Key Files
 
-- `index.cjs` — the shared config (commit-analyzer rules, release-notes types, plugin chain)
+- `index.cjs` — the shared config (commit-analyzer rules, plugin chain)
+- `preset.mjs` — the conventionalcommits preset both analyzing plugins load by path, with the release-notes sections
 - `wrapper.mjs` — ESM re-export of `index.cjs`
-- `index.d.ts` — published type declarations; typed `Options`, not `GlobalConfig`
+- `index.d.ts`, `index.d.cts`, `index.d.mts` — published type declarations; typed `Options`, not `GlobalConfig`.
+  `exports` serves `.d.mts` to `import` and `.d.cts` to `require`; keep all three in step
 - `scripts/postinstall.cjs` — auto-creates `.releaserc.json` in consuming projects
 - `.releaserc.json` — this repo's own release config, extends `./index.cjs`
-- `tsconfig.json` — exists only to typecheck `index.d.ts`
+- `tsconfig.json` — exists only to typecheck the declaration files and `test/types`
 - `test/release-rules.test.mjs` — asserts the release each commit pattern produces
 - `test/config-shape.test.mjs` — asserts the plugin chain, preset, and exports map
 - `test/release-notes.test.mjs` — renders real release notes, so a preset the writer cannot render fails the suite
+- `test/preset-resolution.test.mjs` — runs both plugins from a consumer-shaped tree with a different preset hoisted
+  to the root, which is how base-configs consumers' releases failed
 - `test/postinstall.test.mjs` — asserts the postinstall scaffold, including that it never fails a consumer's install
 
 ## Verification
@@ -21,7 +25,7 @@ Shareable semantic-release configuration using the `conventionalcommits` preset,
 yarn test
 ```
 
-Runs `tsc --noEmit` over `index.d.ts`, then `node --test` over `test/**/*.test.mjs`.
+Runs `tsc --noEmit` over the declaration files, then `node --test` over `test/**/*.test.mjs`.
 The suite feeds real commit messages through `@semantic-release/commit-analyzer` and
 asserts the exact release each one cuts, plus the config shape and the postinstall
 behaviour. Always run this after touching `index.cjs` — the config load check below
@@ -80,7 +84,13 @@ them, on the same range `semantic-release` uses.
 
 ## Gotchas
 
-- The `conventionalcommits` preset requires `conventional-changelog-conventionalcommits` as a direct dependency — without it the config silently falls back to angular
+- The `conventionalcommits` preset requires `conventional-changelog-conventionalcommits` as a direct dependency —
+  `preset.mjs` imports it, and without it every release fails on that import
+- Both analyzing plugins get the preset as `config: <absolute path to preset.mjs>`, never
+  `preset: "conventionalcommits"`. A named preset is resolved from the plugin's own location, which in a consumer's
+  tree finds the hoisted copy rather than this package's: every `@ivuorinen/base-configs` install hoists the 10.x of
+  `@commitlint/config-conventional`, and releases failed with `Missing helper`. A `config` module is called without
+  `presetConfig`, so the release-notes sections live in `preset.mjs`
 - The `angular` preset cannot parse the `!` in `chore(deps)!:` — commits become invisible to semantic-release
 - Plugin order matters: commit-analyzer must come first, release-notes-generator second
 - `conventional-changelog-conventionalcommits` must stay on the major that `semantic-release`'s own
@@ -93,7 +103,8 @@ them, on the same range `semantic-release` uses.
 
 ## context-mode — MANDATORY routing rules
 
-You have context-mode MCP tools available. These rules are NOT optional — they protect your context window from flooding. A single unrouted command can dump 56 KB into context and waste the entire session.
+You have context-mode MCP tools available. These rules are NOT optional — they protect your context window from
+flooding. A single unrouted command can dump 56 KB into context and waste the entire session.
 
 ### BLOCKED commands — do NOT attempt these
 
@@ -107,7 +118,8 @@ Instead use:
 
 #### Inline HTTP — BLOCKED
 
-Any Bash command containing `fetch('http`, `requests.get(`, `requests.post(`, `http.get(`, or `http.request(` is intercepted and replaced with an error message. Do NOT retry with Bash.
+Any Bash command containing `fetch('http`, `requests.get(`, `requests.post(`, `http.get(`, or `http.request(` is
+intercepted and replaced with an error message. Do NOT retry with Bash.
 Instead use:
 
 - `ctx_execute(language, code)` to run HTTP calls in sandbox — only stdout enters context
@@ -132,7 +144,8 @@ For everything else, use:
 #### Read (for analysis)
 
 If you are reading a file to **Edit** it → Read is correct (Edit needs content in context).
-If you are reading to **analyze, explore, or summarize** → use `ctx_execute_file(path, language, code)` instead. Only your printed summary enters context. The raw file content stays in the sandbox.
+If you are reading to **analyze, explore, or summarize** → use `ctx_execute_file(path, language, code)` instead. Only
+your printed summary enters context. The raw file content stays in the sandbox.
 
 #### Grep (large results)
 
@@ -140,7 +153,8 @@ Grep results can flood context. Use `ctx_execute(language: "shell", code: "grep 
 
 ### Tool selection hierarchy
 
-1. **GATHER**: `ctx_batch_execute(commands, queries)` — Primary tool. Runs all commands, auto-indexes output, returns search results. ONE call replaces 30+ individual calls.
+1. **GATHER**: `ctx_batch_execute(commands, queries)` — Primary tool. Runs all commands, auto-indexes output, returns
+    search results. ONE call replaces 30+ individual calls.
 2. **FOLLOW-UP**: `ctx_search(queries: ["q1", "q2", ...])` — Query indexed content. Pass ALL questions as array in ONE call.
 3. **PROCESSING**: `ctx_execute(language, code)` | `ctx_execute_file(path, language, code)` — Sandbox execution. Only stdout enters context.
 4. **WEB**: `ctx_fetch_and_index(url, source)` then `ctx_search(queries)` — Fetch, chunk, index, query. Raw HTML never enters context.

@@ -36,6 +36,7 @@ test("release notes list commits under their sections", async () => {
       commit("feat: add an option", "a"),
       commit("fix!: raise the floor\n\nBREAKING CHANGE: engines raised", "b"),
       commit("docs: a hidden entry", "c"),
+      commit("chore(deps): update a dependency (1.0.0 -> 1.0.1)", "d"),
     ],
     logger: { log() {}, error() {} },
   });
@@ -44,4 +45,7 @@ test("release notes list commits under their sections", async () => {
   assert.match(notes, /### Bug Fixes[\s\S]*raise the floor/u);
   assert.match(notes, /BREAKING CHANGES[\s\S]*engines raised/u);
   assert.doesNotMatch(notes, /a hidden entry/u);
+  // The preset's defaults hide chore; only preset.mjs's own sections show it,
+  // so this fails if the sections stop reaching the preset.
+  assert.match(notes, /### Maintenance[\s\S]*update a dependency/u);
 });

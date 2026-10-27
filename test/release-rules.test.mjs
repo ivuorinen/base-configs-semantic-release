@@ -22,6 +22,12 @@ const cases = [
   ["chore(actions)!: update actions/checkout (v7 -> v8)", null],
   ["chore(actions): update actions/checkout (v7.0.0 -> v7.0.1)", null],
 
+  // The scopes the bots give changes that never reach a consumer: Dependabot's
+  // lockfile-only bumps (.github/dependabot.yml) and every Renovate
+  // devDependency update, majors included (github>ivuorinen/renovate-config).
+  ["chore(lockfile): bump undici from 7.30.0 to 7.30.1", null],
+  ["chore(dev-deps): update dependency vitest (4.1.11 -> 5.0.5)", null],
+
   // conventionalcommits preset defaults.
   ["feat!: drop node 20", "major"],
   ["feat: add an option", "minor"],

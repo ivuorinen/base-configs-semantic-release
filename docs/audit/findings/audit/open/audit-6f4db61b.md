@@ -16,7 +16,8 @@ The publish job reads `secrets.PAT` without a dedicated GitHub Environment.
 zizmor's `secrets-outside-env` audit reports this at High confidence, and it is
 suppressed in `.github/zizmor.yml` rather than fixed.
 
-This supersedes the earlier resolution of `audit-a6526808`, which added `environment: npm-publish` and was later renamed to `release`. That gate has been deliberately removed.
+This supersedes the earlier resolution of `audit-a6526808`, which added `environment: npm-publish` and was later renamed
+to `release`. That gate has been deliberately removed.
 
 ## Evidence
 

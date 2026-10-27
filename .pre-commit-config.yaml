@@ -8,13 +8,24 @@ repos:
         args: [--markdown-linebreak-ext=md]
       - id: check-case-conflict
       - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-toml
       - id: check-yaml
         args: [--allow-multiple-documents]
       - id: end-of-file-fixer
       - id: mixed-line-ending
         args: [--fix=auto]
+      # .mega-linter.yml runs no JSON formatter here, so this hook owns JSON
+      # style; the other base-configs repositories leave it to Prettier.
       - id: pretty-format-json
         args: [--autofix, --no-sort-keys]
+
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker
+    rev: v4.0.2
+    hooks:
+      - id: editorconfig-checker
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.49.1
@@ -28,8 +39,24 @@ repos:
     hooks:
       - id: yamllint
 
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.13.1-1
+    hooks:
+      - id: shfmt
+
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.11.0
+    hooks:
+      - id: shellcheck
+        args: ["--severity=warning"]
+
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.12
     hooks:
       - id: actionlint
         args: ["-shellcheck="]
+
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.31.1
+    hooks:
+      - id: zizmor

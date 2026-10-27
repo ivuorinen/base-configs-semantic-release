@@ -85,9 +85,8 @@ jobs:
         # floating copy from npm in this privileged release job.
         run: corepack enable
 
-      # Keyed on everything that changes the tree, not just the lockfile: a
-      # .nvmrc bump without a yarn.lock change would otherwise hit a stale cache
-      # and skip the install, publishing a tree built for another Node.
+      # Keyed on everything that changes the tree, not just the lockfile, so a
+      # .nvmrc bump without a yarn.lock change starts from a fresh tree.
       - name: Cache Node Modules
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache
@@ -99,9 +98,13 @@ jobs:
       # by default. This job holds the release credentials, so that is the worst
       # place to execute arbitrary third-party install code. Nothing in this tree
       # needs a build step.
+      #
+      # Unconditional, including on a cache hit: gating it on a miss used the
+      # restored node_modules unchecked in exactly the case the cache applies,
+      # which is how base-configs-stylelint 1.4.0 was released by stale rules.
+      # Against a restored tree --immutable relinks rather than refetches.
       - name: Install Dependencies
         shell: bash
-        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --immutable --mode=skip-build
 
       - name: Semantic Release
