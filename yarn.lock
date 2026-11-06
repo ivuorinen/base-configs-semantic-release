@@ -277,7 +277,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ivuorinen/config-checker@npm:^2.2.1, @ivuorinen/config-checker@npm:^2.7.0":
+"@ivuorinen/config-checker@npm:^2.7.0":
   version: 2.7.0
   resolution: "@ivuorinen/config-checker@npm:2.7.0"
   checksum: 10c0/9b61a47b65408a8a886e87b55e476fcb7ced51bd24bc06d9f225f91884516c92a52d608e8e22f870dab5c6915d4a51dc2fa97639eaf4b9d2090d26de00f5794f
@@ -285,17 +285,17 @@ __metadata:
   linkType: hard
 
 "@ivuorinen/eslint-config@npm:^2.0.0":
-  version: 2.0.4
-  resolution: "@ivuorinen/eslint-config@npm:2.0.4"
+  version: 2.0.6
+  resolution: "@ivuorinen/eslint-config@npm:2.0.6"
   dependencies:
     "@eslint/js": "npm:^10.0.1"
-    "@ivuorinen/config-checker": "npm:^2.2.1"
+    "@ivuorinen/config-checker": "npm:^2.7.0"
     eslint: "npm:^10.2.0"
     eslint-config-eslint: "npm:^14.0.0"
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-jest: "npm:^29.15.1"
     globals: "npm:^17.4.0"
-  checksum: 10c0/48e8e1c4a617ad57c0b7f521bc0737cd80f892676dc1ce5c150b39112180fcc4a3770901d1d88f041c9753efb974b091c96c4ce457e19cbb7f230e04d3fb2e9e
+  checksum: 10c0/3ef136265353061361cac6f0d910dd109700b2e33fcd866e13badca9462274ceb27f6d44e211b239bb7bafa2037167e13ccfe31a590990e4871dd10fdbc28ea8
   languageName: node
   linkType: hard
 
