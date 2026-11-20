@@ -59,7 +59,7 @@
   "dependencies": {
     "@ivuorinen/config-checker": "^2.7.0",
     "conventional-changelog-conventionalcommits": "^9.3.1",
-    "semantic-release": "^25.0.5"
+    "semantic-release": "^26.0.0"
   },
   "devDependencies": {
     "@ivuorinen/eslint-config": "^2.0.0",
